@@ -1,7 +1,6 @@
 import type { Route } from './+types/home';
 import { Welcome } from '../welcome/welcome';
 import { useEffect } from 'react';
-import { data } from 'react-router';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -13,9 +12,12 @@ export function meta({}: Route.MetaArgs) {
 export default function Home() {
   useEffect(() => {
     const callback = async () => {
-      const res = await fetch(
-        'https://personal-website-backend-fvac.onrender.com/api/hello'
-      );
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/hello`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       const payload: { message: string } = await res.json();
       console.log(payload.message);
     };
