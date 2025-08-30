@@ -1,9 +1,7 @@
-export interface ImageDetails {
-  fileName: string;
-  url: string;
-}
+import { type ImageData } from "@seanboose/personal-website-api-types";
+
 export interface Props {
-  images?: ImageDetails[];
+  images?: ImageData[];
 }
 
 export function Welcome(props: Props) {
