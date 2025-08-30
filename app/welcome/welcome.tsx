@@ -1,5 +1,4 @@
 import type { ImageData } from "@seanboose/personal-website-api-types";
-import {} from "@seanboose/personal-website-api-types"
 
 export interface Props {
   images?: ImageData[];
