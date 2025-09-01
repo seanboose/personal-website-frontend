@@ -1,6 +1,7 @@
 import type { Route } from './+types/home';
-import { Welcome, type ImageDetails } from '../welcome/welcome';
+import { Welcome } from '../welcome/welcome';
 import { useEffect, useState } from 'react';
+import { type ImageData } from '@seanboose/personal-website-api-types';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -10,12 +11,12 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const [images, setImages] = useState<ImageDetails[]>([]);
+  const [images, setImages] = useState<ImageData[]>([]);
 
   useEffect(() => {
     const callback = async () => {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/listImages`,
+        `${import.meta.env.VITE_API_URL}/api/images/list/`,
         {
           method: 'GET',
           headers: {
@@ -23,7 +24,7 @@ export default function Home() {
           },
         }
       );
-      const payload: { images: ImageDetails[] } = await res.json();
+      const payload: { images: ImageData[] } = await res.json();
       setImages(payload.images || []);
     };
     callback();
