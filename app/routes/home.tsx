@@ -1,10 +1,10 @@
-import type { Route } from './+types/home';
-import { Welcome } from '../welcome/welcome';
-import { useEffect, useState } from 'react';
 import { type ImageData } from '@seanboose/personal-website-api-types';
-import { api } from '../api/';
+import { useEffect, useState } from 'react';
 
-export function meta({}: Route.MetaArgs) {
+import { api } from '../api/';
+import { Welcome } from '../welcome/welcome';
+
+export function meta() {
   return [
     { title: 'Sean Boose Party Bus' },
     { name: 'description', content: 'Welcome to my site!!' },

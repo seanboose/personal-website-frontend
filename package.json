@@ -3,8 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "react-router build",
-    "dev": "react-router dev",
+    "build": "npm run lint && npm run build:ts",
+    "build:ts": "react-router build",
+    "dev": "concurrently -c yellow,cyan \"npm:dev:ts\" \"npm:lint:watch\"",
+    "dev:ts": "react-router dev",
+    "lint": "eslint app",
+    "lint:watch": "nodemon --watch app --ext js,ts,jsx,tsx --delay 100ms --exec \"npm run lint\"",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc"
   },
@@ -17,14 +21,22 @@
     "react-router": "^7.7.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.34.0",
     "@react-router/dev": "^7.7.1",
     "@seanboose/personal-website-api-types": "^1.0.7",
     "@tailwindcss/vite": "^4.1.4",
     "@types/node": "^20",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "nodemon": "^3.1.10",
     "tailwindcss": "^4.1.4",
     "typescript": "^5.8.3",
+    "typescript-eslint": "^8.41.0",
     "vite": "^6.3.3",
     "vite-tsconfig-paths": "^5.1.4"
   }
