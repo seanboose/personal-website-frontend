@@ -1,7 +1,7 @@
 import { type ImageData } from '@seanboose/personal-website-api-types';
 import { useEffect, useState } from 'react';
 
-import { api } from '../api/';
+import { api } from '../shared/api';
 import { Welcome } from '../welcome/welcome';
 
 export function meta() {

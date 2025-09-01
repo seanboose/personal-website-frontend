@@ -1,10 +1,12 @@
+import { config } from '../shared/config';
+
 const apiFetch = async (path: string, options: RequestInit = {}) => {
   const headers = {
     ...options.headers,
     'Content-Type': 'application/json',
     Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
   };
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/${path}`, {
+  const res = await fetch(`${config.apiUrl}/api/${path}`, {
     ...options,
     headers,
   });
