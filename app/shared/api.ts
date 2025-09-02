@@ -37,7 +37,8 @@ export const fetchGrantAuth = async () => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-internal-auth-key': process.env.AUTH_REQUEST_KEY || '',
+      // TODO
+      'x-internal-auth-key': getAuthRequestKey(),
     },
     credentials: 'include',
     body: JSON.stringify(body),
@@ -46,3 +47,11 @@ export const fetchGrantAuth = async () => {
   authCookie = cookie || '';
   return res;
 };
+
+function getAuthRequestKey(): string {
+  const secret = process.env.AUTH_REQUEST_KEY;
+  if (!secret) {
+    throw new Error('Missing AUTH_REQUEST_KEY env var');
+  }
+  return secret;
+}
