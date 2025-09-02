@@ -1,6 +1,7 @@
 import { useLoaderData } from 'react-router';
 
-import { api, fetchGrantAuth } from '../shared/api';
+import { api } from '../shared/api';
+import { fetchGrantAuth } from '../shared/auth';
 import { Welcome } from '../welcome/welcome';
 
 export function meta() {
