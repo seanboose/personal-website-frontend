@@ -1,7 +1,6 @@
-import { type ImageData } from '@seanboose/personal-website-api-types';
-import { useEffect, useState } from 'react';
+import { useLoaderData } from 'react-router';
 
-import { api } from '../shared/api';
+import { api, fetchGrantAuth } from '../shared/api';
 import { Welcome } from '../welcome/welcome';
 
 export function meta() {
@@ -11,16 +10,14 @@ export function meta() {
   ];
 }
 
-export default function Home() {
-  const [images, setImages] = useState<ImageData[]>([]);
+export const loader = async () => {
+  await fetchGrantAuth();
+  const { images = [] } = await api.images.list();
+  return { images };
+};
 
-  useEffect(() => {
-    const callback = async () => {
-      const payload = await api.images.list();
-      setImages(payload.images || []);
-    };
-    callback();
-  }, []);
+export default function Home() {
+  const { images } = useLoaderData<typeof loader>();
 
   return <Welcome images={images} />;
 }
