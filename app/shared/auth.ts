@@ -1,14 +1,16 @@
 import { clientConfig, serverConfig } from './config';
 
 export let authCookie = '';
+const authRequestClientKey = 'auth-request-client';
+const authRequestClient = 'personal-website-frontend';
 
 export const fetchGrantAuth = async () => {
-  const body = { client: 'personal-website-frontend' };
+  const body = { [authRequestClientKey]: authRequestClient };
   const res = await fetch(`${clientConfig.apiUrl}/api/auth/grant`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-internal-auth-key': serverConfig.authRequestKey,
+      'internal-auth-key': serverConfig.authRequestKey,
     },
     credentials: 'include',
     body: JSON.stringify(body),
