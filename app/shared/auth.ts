@@ -3,10 +3,11 @@ import { clientConfig, serverConfig } from './config';
 export let authCookie = '';
 const authRequestClientKey = 'auth-request-client';
 const authRequestClient = 'personal-website-frontend';
+const grantAuthUrl = `${clientConfig.apiUrl}/api/auth/grant`;
 
 export const fetchGrantAuth = async () => {
   const body = { [authRequestClientKey]: authRequestClient };
-  const res = await fetch(`${clientConfig.apiUrl}/api/auth/grant`, {
+  const res = await fetch(grantAuthUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

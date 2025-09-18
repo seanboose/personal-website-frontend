@@ -43,7 +43,7 @@ export default function ImageDisplay() {
   const images: ImageData[] = actionResponse?.images ?? loaderImages;
 
   useEffect(() => {
-    if (fetcher.data?.loadCount) {
+    if (typeof fetcher.data?.loadCount === 'number') {
       setLoadCount(fetcher.data?.loadCount);
     }
   }, [fetcher.data?.loadCount]);
@@ -58,11 +58,15 @@ export default function ImageDisplay() {
     <main className="flex items-center justify-center pt-16 pb-4">
       <div className="flex-1 flex flex-col items-center gap-16 min-h-0">
         <p>behold, an image!</p>
-        {images.map((image) => (
-          <div key={image.fileName} className="p-4">
-            <img src={image.url} alt={image.fileName} className="max-w-xs" />
+        {images[0] && (
+          <div key={images[0].fileName} className="p-4">
+            <img
+              src={images[0].url}
+              alt={images[0].fileName}
+              className="max-w-xs"
+            />
           </div>
-        ))}
+        )}
         <p>{`the image has been loaded ${loadCount} times!`}</p>
         <button type="submit" onClick={handleReloadClick}>
           load it again!

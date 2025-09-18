@@ -5,7 +5,6 @@ const apiFetch = async (path: string, options: RequestInit = {}) => {
   const headers = {
     ...options.headers,
     'Content-Type': 'application/json',
-    // TODO do i want to set this conditionally depending on ssr/csr? maybe a separate api?
     Cookie: authCookie,
   };
   const res = await fetch(`${clientConfig.apiUrl}/api/${path}`, {
