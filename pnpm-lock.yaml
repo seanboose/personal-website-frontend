@@ -34,8 +34,8 @@ importers:
         specifier: ^7.7.1
         version: 7.9.4(@react-router/serve@7.9.4(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3))(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(vite@6.4.1(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2))
       '@seanboose/personal-website-api-types':
-        specifier: ^1.0.7
-        version: 1.0.7
+        specifier: 1.0.11
+        version: 1.0.11
       '@tailwindcss/vite':
         specifier: ^4.1.4
         version: 4.1.16(vite@6.4.1(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2))
@@ -640,8 +640,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@seanboose/personal-website-api-types@1.0.7':
-    resolution: {integrity: sha512-2MdzDgJxBPgTgKf5OwfdPPCQPvd8lVBBwJU+SS1XQ0kwWjbrliiXLLrsOM+z5lhyG2L7xuDi4LX5+SAniOkjaw==, tarball: https://npm.pkg.github.com/download/@seanboose/personal-website-api-types/1.0.7/937640c790b277792798f0777fa71313771ba095}
+  '@seanboose/personal-website-api-types@1.0.11':
+    resolution: {integrity: sha512-tjd6MBB79I4iM10P2uP/dzu0Jw4Pfds7qNBqmjjiXa99goOs9dvcJu8rBRUrf5IBW0WoUazLjcKiIfLtd+4TVw==, tarball: https://npm.pkg.github.com/download/@seanboose/personal-website-api-types/1.0.11/6016af5154961cd8f8119a1e908f4f09812ae479}
 
   '@tailwindcss/node@4.1.16':
     resolution: {integrity: sha512-BX5iaSsloNuvKNHRN3k2RcCuTEgASTo77mofW0vmeHkfrDWaoFAFvNHpEgtu0eqyypcyiBkDWzSMxJhp3AUVcw==}
@@ -2692,7 +2692,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.52.5':
     optional: true
 
-  '@seanboose/personal-website-api-types@1.0.7': {}
+  '@seanboose/personal-website-api-types@1.0.11': {}
 
   '@tailwindcss/node@4.1.16':
     dependencies:
