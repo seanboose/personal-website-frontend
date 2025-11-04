@@ -2,6 +2,9 @@ import { clientConfig, serverConfig } from './config';
 
 export let authCookie = '';
 export let refreshCookie = '';
+
+const authTokenName = 'access_token';
+const refreshTokenName = 'refresh_token';
 const authRequestClientKey = 'auth-request-client';
 const authRequestClient = 'personal-website-frontend';
 const grantAuthUrl = `${clientConfig.apiUrl}/api/auth/grant`;
@@ -27,16 +30,11 @@ export const fetchGrantAuth = async () => {
     );
   }
 
-  // TODO this cookie parsing is terrible
-  const cookies = res.headers.get('set-cookie')?.split(',') || [];
-  console.log({ cookies });
-  authCookie = cookies[0].split(';')[0] || '';
-  refreshCookie = cookies[2].split(';')[0] || '';
+  parseAndStoreAuthCookies(res);
   return res;
 };
 
 export const fetchRefreshAuth = async () => {
-  console.log(refreshCookie);
   const res = await fetch(refreshAuthUrl, {
     method: 'POST',
     headers: {
@@ -53,9 +51,19 @@ export const fetchRefreshAuth = async () => {
       `Refresh auth request failed with status=${res.status}, message="${message}"`,
     );
   }
-  const cookies = res.headers.get('set-cookie')?.split(';') || [];
-  authCookie = cookies[0] || '';
-  refreshCookie = cookies[1] || '';
+  parseAndStoreAuthCookies(res);
 
   return res;
+};
+
+const parseAndStoreAuthCookies = (res: Response) => {
+  const setCookies = res.headers.getSetCookie();
+  for (const cookie of setCookies) {
+    const nameValue = cookie.split(';')[0];
+    if (nameValue.startsWith(`${authTokenName}=`)) {
+      authCookie = nameValue;
+    } else if (nameValue.startsWith(`${refreshTokenName}=`)) {
+      refreshCookie = nameValue;
+    }
+  }
 };
