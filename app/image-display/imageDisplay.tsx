@@ -8,13 +8,19 @@ import {
 } from 'react-router';
 
 import { api } from '~/shared/api';
-import { fetchGrantAuth } from '~/shared/auth';
+import { fetchGrantAuth, fetchRefreshAuth } from '~/shared/auth';
 
 interface LoaderResponse {
   images: ImageData[];
 }
+
 export const loader = async (): Promise<LoaderResponse> => {
-  await fetchGrantAuth();
+  try {
+    await fetchGrantAuth();
+  } catch (error) {
+    console.log('CAUGHT EXPIRATION');
+    console.log(error);
+  }
   const { images = [] } = await api.images.list();
   return { images };
 };
@@ -22,6 +28,7 @@ export const loader = async (): Promise<LoaderResponse> => {
 interface ActionResponse extends LoaderResponse {
   loadCount: number;
 }
+
 export const action = async ({
   request,
 }: ActionFunctionArgs): Promise<ActionResponse> => {
@@ -31,6 +38,8 @@ export const action = async ({
   if (typeof rawLoadCount === 'string') {
     loadCount = parseInt(rawLoadCount, 10) + 1;
   }
+
+  await fetchRefreshAuth();
   const { images = [] } = await api.images.list();
   return { images, loadCount };
 };
