@@ -1,15 +1,20 @@
 # overview
 
 frontend for a personal website
+
 - backend: @seanboose/personal-website-backend
 - shared types: @seanboose/personal-website-api-types
 
 built using create-vite with react-router-v7 option
+
 - goal is to get more practice with SSR components
 
 uses JWT for authentication with backend
 
-deployed to https://personal-website-frontend-flame.vercel.app/image-display
+# deployment urls
+
+- production: https://personal-website-frontend-flame.vercel.app/image-display
+- staging: https://personal-website-frontend-staging.vercel.app/image-display
 
 # roadmap
 

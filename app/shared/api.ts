@@ -1,11 +1,9 @@
 import { clientConfig } from '../shared/config';
-import { authCookie } from './auth';
 
 const apiFetch = async (path: string, options: RequestInit = {}) => {
   const headers = {
     ...options.headers,
     'Content-Type': 'application/json',
-    Cookie: authCookie,
   };
   const res = await fetch(`${clientConfig.apiUrl}/api/${path}`, {
     ...options,
@@ -25,6 +23,12 @@ const apiFetch = async (path: string, options: RequestInit = {}) => {
 
 export const api = {
   images: {
-    list: async () => apiFetch('images/list'),
+    list: async (accessToken?: string) =>
+      apiFetch(
+        'images/list',
+        accessToken
+          ? { headers: { Authorization: `Bearer ${accessToken}` } }
+          : undefined,
+      ),
   },
 };

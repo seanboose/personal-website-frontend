@@ -1,10 +1,8 @@
+import { authAccessTokenName } from '@seanboose/personal-website-api-types';
+import { redirect } from 'react-router';
+
 import { clientConfig, serverConfig } from './config';
 
-export let authCookie = '';
-export let refreshCookie = '';
-
-const authTokenName = 'access_token';
-const refreshTokenName = 'refresh_token';
 const authRequestClientKey = 'auth-request-client';
 const authRequestClient = 'personal-website-frontend';
 const grantAuthUrl = `${clientConfig.apiUrl}/api/auth/grant`;
@@ -30,16 +28,15 @@ export const fetchGrantAuth = async () => {
     );
   }
 
-  parseAndStoreAuthCookies(res);
   return res;
 };
 
-export const fetchRefreshAuth = async () => {
+export const fetchRefreshAuth = async (cookieHeader: string) => {
   const res = await fetch(refreshAuthUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Cookie: refreshCookie,
+      Cookie: cookieHeader,
     },
     credentials: 'include',
   });
@@ -51,19 +48,22 @@ export const fetchRefreshAuth = async () => {
       `Refresh auth request failed with status=${res.status}, message="${message}"`,
     );
   }
-  parseAndStoreAuthCookies(res);
 
   return res;
 };
 
-const parseAndStoreAuthCookies = (res: Response) => {
-  const setCookies = res.headers.getSetCookie();
-  for (const cookie of setCookies) {
-    const nameValue = cookie.split(';')[0];
-    if (nameValue.startsWith(`${authTokenName}=`)) {
-      authCookie = nameValue;
-    } else if (nameValue.startsWith(`${refreshTokenName}=`)) {
-      refreshCookie = nameValue;
-    }
+/**
+ * checks client request for an access_token cookie. if it's there, returns it. if not, redirects to auth and sets it
+ * @param request incoming client request, just pass it in from the loader/action
+ */
+export const requireAuthForLoader = async (request: Request) => {
+  const cookieHeader = request.headers.get('cookie');
+  const accessTokenRegex = new RegExp(`${authAccessTokenName}=([^;]+)`);
+  const accessToken = cookieHeader?.match(accessTokenRegex)?.[1];
+  if (!accessToken) {
+    const url = new URL(request.url);
+    const redirectTo = url.pathname + url.search;
+    throw redirect(`/auth/init?redirectTo=${encodeURIComponent(redirectTo)}`);
   }
+  return accessToken;
 };

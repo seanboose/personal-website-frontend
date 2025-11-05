@@ -1,27 +1,26 @@
-import type { ImageData } from '@seanboose/personal-website-api-types';
+import { type ImageData } from '@seanboose/personal-website-api-types';
 import { useEffect, useState } from 'react';
 import {
   type ActionFunctionArgs,
+  type LoaderFunctionArgs,
   useActionData,
   useFetcher,
   useLoaderData,
 } from 'react-router';
 
 import { api } from '~/shared/api';
-import { fetchGrantAuth, fetchRefreshAuth } from '~/shared/auth';
+import { fetchRefreshAuth, requireAuthForLoader } from '~/shared/auth';
 
 interface LoaderResponse {
   images: ImageData[];
 }
 
-export const loader = async (): Promise<LoaderResponse> => {
-  try {
-    await fetchGrantAuth();
-  } catch (error) {
-    console.log('CAUGHT EXPIRATION');
-    console.log(error);
-  }
-  const { images = [] } = await api.images.list();
+export const loader = async ({
+  request,
+}: LoaderFunctionArgs): Promise<LoaderResponse> => {
+  const accessToken = await requireAuthForLoader(request);
+  console.log('about to request images finally');
+  const { images = [] } = await api.images.list(accessToken);
   return { images };
 };
 
@@ -39,7 +38,10 @@ export const action = async ({
     loadCount = parseInt(rawLoadCount, 10) + 1;
   }
 
-  await fetchRefreshAuth();
+  const cookieHeader = request.headers.get('cookie') || '';
+  console.log('refreshing auth');
+  console.log(cookieHeader);
+  await fetchRefreshAuth(cookieHeader);
   const { images = [] } = await api.images.list();
   return { images, loadCount };
 };
