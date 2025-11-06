@@ -13,7 +13,7 @@ uses JWT for authentication with backend
 
 # deployment urls
 
-- production: https://personal-website-frontend-flame.vercel.app/image-display
+- production: https://personal-website-frontend-production.vercel.app/image-display
 - staging: https://personal-website-frontend-staging.vercel.app/image-display
 
 # roadmap
