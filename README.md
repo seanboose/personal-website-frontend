@@ -2,19 +2,26 @@
 
 frontend for a personal website
 
-- backend: @seanboose/personal-website-backend
-- shared types: @seanboose/personal-website-api-types
+built using create-vite with react-router-v7 option (i want to get more practice with SSR apps)
 
-built using create-vite with react-router-v7 option
+uses Bearer token authorization (JWT) to communicate with backend
 
-- goal is to get more practice with SSR components
+# deployment
 
-uses JWT for authentication with backend
+automatically deploys to vercel on changes.
+any changes to the `production` branch deploys to production, any changes on any other branch deploy to `staging`.
+id like it to just deploy on changes to the `staging` branch, but vercel does not currently support that on their free
+tier.
 
-# deployment urls
+urls
 
 - production: https://personal-website-frontend-production.vercel.app/image-display
 - staging: https://personal-website-frontend-staging.vercel.app/image-display
+
+# related repos
+
+- backend: @seanboose/personal-website-backend
+- shared types: @seanboose/personal-website-api-types
 
 # roadmap
 
