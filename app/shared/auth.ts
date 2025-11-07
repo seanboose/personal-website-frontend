@@ -156,6 +156,8 @@ const makeAuthCookies = ({
   refreshToken: string;
   refreshExpiresIn: number;
 }) => {
+  console.log('MAKING AUTH COOKIES');
+  console.log({ accessToken, expiresIn, refreshToken, refreshExpiresIn });
   const accessTokenCookie = `access_token=${accessToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${expiresIn}`;
   const refreshTokenCookie = `refresh_token=${refreshToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${refreshExpiresIn}`;
   return { accessTokenCookie, refreshTokenCookie };
