@@ -1,6 +1,11 @@
-import { clientConfig } from '../shared/config';
+import { type ImageData } from '@seanboose/personal-website-api-types';
 
-const apiFetch = async (path: string, options: RequestInit = {}) => {
+import { clientConfig } from '~/shared/config';
+
+const apiFetch = async <T>(
+  path: string,
+  options: RequestInit = {},
+): Promise<T> => {
   const headers = {
     ...options.headers,
     'Content-Type': 'application/json',
@@ -18,13 +23,17 @@ const apiFetch = async (path: string, options: RequestInit = {}) => {
       `API request failed with status=${res.status}, message="${message}"`,
     );
   }
-  return res.json();
+  return res.json(); // TODO may need to cast as Promise<T>;
 };
+
+interface ImagesListResponse {
+  images: ImageData[];
+}
 
 export const api = {
   images: {
     list: async (accessToken?: string) =>
-      apiFetch(
+      apiFetch<ImagesListResponse>(
         'images/list',
         accessToken
           ? { headers: { Authorization: `Bearer ${accessToken}` } }

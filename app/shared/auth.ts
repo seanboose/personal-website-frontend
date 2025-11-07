@@ -68,13 +68,17 @@ const getRefreshTokenFromRequest = (request: Request): string | undefined => {
   return cookieHeader?.match(refreshTokenRegex)?.[1];
 };
 
+interface RequestWithAuthResponse<T> {
+  body: T;
+  headers?: HeadersInit;
+  accessToken: string;
+}
+
 export async function requestWithAuth<T>(
   request: Request,
   apiCall: (accessToken: string) => Promise<T>,
   accessTokenOverride?: string, // allow passing a refreshed token from a previous call
-
-  // TODO data is not a good name, its a rr7 helper function
-): Promise<{ data: T; headers?: HeadersInit; accessToken: string }> {
+): Promise<RequestWithAuthResponse<T>> {
   // TODO might be able to drop the override, not sure yet
   const accessToken = accessTokenOverride || getAccessTokenFromRequest(request);
   const refreshToken = getRefreshTokenFromRequest(request);
@@ -86,43 +90,42 @@ export async function requestWithAuth<T>(
 
   console.log(`REFRESH HELPER: first accessToken:${accessToken}`);
 
-  try {
-    if (typeof accessToken === 'undefined') {
-      // TODO super janky, short circuiting the try/catch to switch to refreshing
-      throw new Error('Access token is expired, refreshing');
+  if (typeof accessToken !== 'undefined') {
+    try {
+      const body = await apiCall(accessToken);
+      return { body, accessToken };
+    } catch (error) {
+      // TODO really need to create that new error type
+      if (!(error instanceof Error)) {
+        throw error;
+      }
     }
-    const data = await apiCall(accessToken);
-    return { data, accessToken };
-  } catch (error) {
-    // TODO need to use new Error types here
-    if (error instanceof Error) {
-      const response = await fetchRefreshAuth(request);
-      const json = await response.json();
-      const {
-        accessToken: newAccessToken,
-        expiresIn,
-        refreshToken: newRefreshToken,
-        refreshExpiresIn,
-      } = json;
-      console.log(`REFRESH HELPER: second accessToken:${newAccessToken}`);
-      const { accessTokenCookie, refreshTokenCookie } = makeAuthCookies({
-        accessToken: newAccessToken,
-        expiresIn,
-        refreshToken: newRefreshToken,
-        refreshExpiresIn,
-      });
-      const data = await apiCall(newAccessToken);
-      return {
-        data,
-        headers: [
-          ['Set-Cookie', accessTokenCookie],
-          ['Set-Cookie', refreshTokenCookie],
-        ],
-        accessToken: newAccessToken,
-      };
-    }
-    throw Error;
   }
+
+  const response = await fetchRefreshAuth(request);
+  const json = await response.json();
+  const {
+    accessToken: newAccessToken,
+    expiresIn,
+    refreshToken: newRefreshToken,
+    refreshExpiresIn,
+  } = json;
+  console.log(`REFRESH HELPER: second accessToken:${newAccessToken}`);
+  const { accessTokenCookie, refreshTokenCookie } = makeAuthCookies({
+    accessToken: newAccessToken,
+    expiresIn,
+    refreshToken: newRefreshToken,
+    refreshExpiresIn,
+  });
+  const body = await apiCall(newAccessToken);
+  return {
+    body,
+    headers: [
+      ['Set-Cookie', accessTokenCookie],
+      ['Set-Cookie', refreshTokenCookie],
+    ],
+    accessToken: newAccessToken,
+  };
 }
 
 interface MakeAuthCookiesProps {
