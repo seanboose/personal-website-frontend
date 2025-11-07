@@ -17,12 +17,8 @@ interface LoaderResponse {
 }
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  console.log('LOADER: start');
   const { body, headers } = await requestWithAuth(request, api.images.list);
   const { images = [] } = body;
-
-  // TODO this considers data to be `any` still, need to figure that out
-  console.log('LOADER: returning');
   return data({ images } satisfies LoaderResponse, { headers });
 };
 
@@ -31,7 +27,6 @@ interface ActionResponse extends LoaderResponse {
 }
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  console.log('ACTION: start');
   let loadCount = 0;
   const formData = await request.formData();
   const rawLoadCount = formData.get('loadCount');
@@ -41,10 +36,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   const { body, headers } = await requestWithAuth(request, api.images.list);
   const { images = [] } = body;
-  console.log('ACTION: returning');
 
-  // TODO id like a better typing solution for this response than a `satisfies`, but it may not be possible
-  // TS infers types fine, but i want guard rails that prevent me from changing the response on accident
   return data({ images, loadCount } satisfies ActionResponse, { headers });
 };
 

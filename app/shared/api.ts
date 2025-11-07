@@ -16,16 +16,16 @@ const apiFetch = async <T>(
     headers,
   });
   if (!res.ok) {
-    // TODO idk if i like this pattern. its hard to troubleshoot failures, especially SSR requests
     const json = await res.json();
     const message = json?.message;
     throw new Error(
       `API request failed with status=${res.status}, message="${message}"`,
     );
   }
-  return res.json(); // TODO may need to cast as Promise<T>;
+  return res.json();
 };
 
+// TODO define these with oapi in api-types
 interface ImagesListResponse {
   images: ImageData[];
 }
