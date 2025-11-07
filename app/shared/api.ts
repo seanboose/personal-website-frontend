@@ -1,11 +1,14 @@
-import { clientConfig } from '../shared/config';
-import { authCookie } from './auth';
+import { type ImageData } from '@seanboose/personal-website-api-types';
 
-const apiFetch = async (path: string, options: RequestInit = {}) => {
+import { clientConfig } from '~/shared/config';
+
+const apiFetch = async <T>(
+  path: string,
+  options: RequestInit = {},
+): Promise<T> => {
   const headers = {
     ...options.headers,
     'Content-Type': 'application/json',
-    Cookie: authCookie,
   };
   const res = await fetch(`${clientConfig.apiUrl}/api/${path}`, {
     ...options,
@@ -13,7 +16,6 @@ const apiFetch = async (path: string, options: RequestInit = {}) => {
     headers,
   });
   if (!res.ok) {
-    // TODO idk if i like this pattern. its hard to troubleshoot failures, especially SSR requests
     const json = await res.json();
     const message = json?.message;
     throw new Error(
@@ -23,8 +25,19 @@ const apiFetch = async (path: string, options: RequestInit = {}) => {
   return res.json();
 };
 
+// TODO define these with oapi in api-types
+interface ImagesListResponse {
+  images: ImageData[];
+}
+
 export const api = {
   images: {
-    list: async () => apiFetch('images/list'),
+    list: async (accessToken?: string) =>
+      apiFetch<ImagesListResponse>(
+        'images/list',
+        accessToken
+          ? { headers: { Authorization: `Bearer ${accessToken}` } }
+          : undefined,
+      ),
   },
 };
