@@ -9,14 +9,14 @@ uses Bearer token authorization (JWT) to communicate with backend
 # deployment
 
 automatically deploys to vercel on changes.
-any changes to the `production` branch deploys to production, any changes on any other branch deploy to `staging`.
-id like it to just deploy on changes to the `staging` branch, but vercel does not currently support that on their free
-tier.
+any changes to the `production` branch deploys to production.
+any changes to other branches deploy to preview instances.
 
 urls
 
 - production: https://personal-website-frontend-production.vercel.app/image-display
 - staging: https://personal-website-frontend-staging.vercel.app/image-display
+- <anyBranch>: https://personal-website-frontend-<anyBranch>.vercel.app/image-display
 
 # related repos
 
