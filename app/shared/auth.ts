@@ -12,7 +12,6 @@ const grantAuthUrl = `${clientConfig.apiUrl}/api/auth/grant`;
 const refreshAuthUrl = `${clientConfig.apiUrl}/api/auth/refresh`;
 
 export const fetchGrantAuth = async () => {
-  const body = { [authRequestClientKey]: authRequestClient };
   const res = await fetch(grantAuthUrl, {
     method: 'POST',
     headers: {
@@ -20,7 +19,7 @@ export const fetchGrantAuth = async () => {
       'internal-auth-key': serverConfig.authRequestKey,
     },
     credentials: 'include',
-    body: JSON.stringify(body),
+    body: JSON.stringify({ [authRequestClientKey]: authRequestClient }),
   });
 
   if (!res.ok) {
@@ -73,11 +72,55 @@ export const requireAuthForLoader = async (request: Request) => {
   return accessToken;
 };
 
-export const getAccessTokenFromRequest = (
-  request: Request,
-): string | undefined => {
+const getAccessTokenFromRequest = (request: Request): string | undefined => {
   const cookieHeader = request.headers.get('cookie');
   const accessTokenRegex = new RegExp(`${authAccessTokenName}=([^;]+)`);
-  const accessToken = cookieHeader?.match(accessTokenRegex)?.[1];
-  return accessToken;
+  return cookieHeader?.match(accessTokenRegex)?.[1];
+};
+
+export async function requestWithRefresh<T>(
+  request: Request,
+  apiCall: (accessToken: string) => Promise<T>,
+  accessTokenOverride?: string, // allow passing a refreshed token from a previous call
+): Promise<{ data: T; headers?: HeadersInit; accessToken: string }> {
+  const accessToken = accessTokenOverride || getAccessTokenFromRequest(request);
+  console.log(`REFRESH HELPER: first accessToken:${accessToken}`);
+  if (typeof accessToken === 'undefined') {
+    throw new Error('Must provide access token when refreshing');
+  }
+
+  try {
+    const data = await apiCall(accessToken);
+    return { data, accessToken };
+  } catch (error) {
+    // TODO need to use new Error types here
+    if (error instanceof Error) {
+      const response = await fetchRefreshAuth(request);
+      const json = await response.json();
+      const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+        json;
+      console.log(`REFRESH HELPER: second accessToken:${newAccessToken}`);
+      const { accessTokenCookie, refreshTokenCookie } = makeAuthCookies(
+        newAccessToken,
+        newRefreshToken,
+      );
+      const data = await apiCall(newAccessToken);
+      return {
+        data,
+        headers: [
+          ['Set-Cookie', accessTokenCookie],
+          ['Set-Cookie', refreshTokenCookie],
+        ],
+        accessToken: newAccessToken,
+      };
+    }
+    throw Error;
+  }
+}
+
+export const makeAuthCookies = (accessToken: string, refreshToken: string) => {
+  // TODO need to get expiresIn,refreshExpiresIn from backend
+  const accessTokenCookie = `access_token=${accessToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${15 * 60}`;
+  const refreshTokenCookie = `refresh_token=${refreshToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${7 * 24 * 60 * 60}`;
+  return { accessTokenCookie, refreshTokenCookie };
 };

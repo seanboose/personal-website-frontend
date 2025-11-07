@@ -12,7 +12,7 @@ import {
 import { api } from '~/shared/api';
 import {
   fetchRefreshAuth,
-  getAccessTokenFromRequest,
+  requestWithRefresh,
   requireAuthForLoader,
 } from '~/shared/auth';
 
@@ -45,44 +45,6 @@ export const loader = async ({
   return { images };
 };
 
-async function requestWithRefresh<T>(
-  request: Request,
-  // TODO doesnt handle requests with args
-  apiCall: (accessToken: string) => Promise<T>,
-  tokenOverride?: string, // allow passing a refreshed token from a previous call
-): Promise<{ data: T; headers?: HeadersInit; accessToken: string }> {
-  // TODO forcing this to be a string so i can use it, need to fix later
-  const accessToken = tokenOverride || getAccessTokenFromRequest(request) || '';
-  console.log(`REFRESH HELPER: first accessToken:${accessToken}`);
-
-  try {
-    const data = await apiCall(accessToken);
-    return { data, accessToken };
-  } catch (error) {
-    // TODO need to use new Error types here
-    if (error instanceof Error) {
-      const response = await fetchRefreshAuth(request);
-      const json = await response.json();
-      const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-        json;
-      console.log(`REFRESH HELPER: second accessToken:${newAccessToken}`);
-      // TODO copied from auth.init, need to refactor
-      const accessTokenCookie = `access_token=${newAccessToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${15 * 60}`;
-      const refreshTokenCookie = `refresh_token=${newRefreshToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${7 * 24 * 60 * 60}`;
-      const data = await apiCall(newAccessToken);
-      return {
-        data,
-        headers: [
-          ['Set-Cookie', accessTokenCookie],
-          ['Set-Cookie', refreshTokenCookie],
-        ],
-        accessToken: newAccessToken,
-      };
-    }
-    throw Error;
-  }
-}
-
 interface ActionResponse extends LoaderResponse {
   loadCount: number;
 }
@@ -97,7 +59,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   const { data: tempData, headers } = await requestWithRefresh(
     request,
-    api.images.list,
+    (token) => api.images.list(token),
   );
   const { images = [] } = tempData;
   console.log(images);
