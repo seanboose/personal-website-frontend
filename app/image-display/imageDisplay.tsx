@@ -24,12 +24,10 @@ export const loader = async ({
   request,
 }: LoaderFunctionArgs): Promise<LoaderResponse> => {
   console.log('LOADER: requesting auth');
-  const oldAccessToken = await requireAuthForLoader(request);
-  // TODO need to do this in a catch
-
+  const accessToken = await requireAuthForLoader(request);
   let images: ImageData[] = [];
   try {
-    images = (await api.images.list(oldAccessToken)).images;
+    images = (await api.images.list(accessToken)).images;
   } catch (error) {
     if (error instanceof Error) {
       // TODO: need to make custom error types in api-types
@@ -51,13 +49,15 @@ async function requestWithRefresh<T>(
   request: Request,
   // TODO doesnt handle requests with args
   apiCall: (accessToken: string) => Promise<T>,
-): Promise<{ data: T; headers?: HeadersInit }> {
+  tokenOverride?: string, // allow passing a refreshed token from a previous call
+): Promise<{ data: T; headers?: HeadersInit; accessToken: string }> {
   // TODO forcing this to be a string so i can use it, need to fix later
-  const accessToken = getAccessTokenFromRequest(request) || '';
+  const accessToken = tokenOverride || getAccessTokenFromRequest(request) || '';
+  console.log(`REFRESH HELPER: first accessToken:${accessToken}`);
 
   try {
     const data = await apiCall(accessToken);
-    return { data };
+    return { data, accessToken };
   } catch (error) {
     // TODO need to use new Error types here
     if (error instanceof Error) {
@@ -65,6 +65,7 @@ async function requestWithRefresh<T>(
       const json = await response.json();
       const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
         json;
+      console.log(`REFRESH HELPER: second accessToken:${newAccessToken}`);
       // TODO copied from auth.init, need to refactor
       const accessTokenCookie = `access_token=${newAccessToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${15 * 60}`;
       const refreshTokenCookie = `refresh_token=${newRefreshToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${7 * 24 * 60 * 60}`;
@@ -75,6 +76,7 @@ async function requestWithRefresh<T>(
           ['Set-Cookie', accessTokenCookie],
           ['Set-Cookie', refreshTokenCookie],
         ],
+        accessToken: newAccessToken,
       };
     }
     throw Error;
@@ -99,6 +101,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   );
   const { images = [] } = tempData;
   console.log(images);
+  // TODO id like a better typing solution for this response than a `satisfies`, but it may not be possible
+  // TS infers types fine, but i want guard rails that prevent me from changing the response on accident
   return data({ images, loadCount } satisfies ActionResponse, { headers });
 };
 
