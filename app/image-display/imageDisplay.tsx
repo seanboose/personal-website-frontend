@@ -10,39 +10,23 @@ import {
 } from 'react-router';
 
 import { api } from '~/shared/api';
-import {
-  fetchRefreshAuth,
-  requestWithRefresh,
-  requireAuthForLoader,
-} from '~/shared/auth';
+import { requestWithAuth } from '~/shared/auth';
 
 interface LoaderResponse {
   images: ImageData[];
 }
 
-export const loader = async ({
-  request,
-}: LoaderFunctionArgs): Promise<LoaderResponse> => {
-  console.log('LOADER: requesting auth');
-  const accessToken = await requireAuthForLoader(request);
-  let images: ImageData[] = [];
-  try {
-    images = (await api.images.list(accessToken)).images;
-  } catch (error) {
-    if (error instanceof Error) {
-      // TODO: need to make custom error types in api-types
-      console.log('LOADER: going to refresh auth');
-      const refreshResponse = await fetchRefreshAuth(request);
-      const { accessToken: newAccessToken } = await refreshResponse.json();
-      console.log('LOADER: refreshed auth, requesting images');
-      images = (await api.images.list(newAccessToken)).images;
-    } else {
-      console.log('LOADER: unexpected error encountered');
-      console.log(error);
-      throw error;
-    }
-  }
-  return { images };
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  console.log('LOADER: start');
+  const { data: dataResponse, headers } = await requestWithAuth(
+    request,
+    api.images.list,
+  );
+  const { images = [] }: LoaderResponse = dataResponse;
+
+  // TODO this considers data to be `any` still, need to figure that out
+  console.log('LOADER: returning');
+  return data({ images } satisfies LoaderResponse, { headers });
 };
 
 interface ActionResponse extends LoaderResponse {
@@ -50,6 +34,7 @@ interface ActionResponse extends LoaderResponse {
 }
 
 export const action = async ({ request }: ActionFunctionArgs) => {
+  console.log('ACTION: start');
   let loadCount = 0;
   const formData = await request.formData();
   const rawLoadCount = formData.get('loadCount');
@@ -57,12 +42,13 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     loadCount = parseInt(rawLoadCount, 10) + 1;
   }
 
-  const { data: tempData, headers } = await requestWithRefresh(
+  const { data: dataResponse, headers } = await requestWithAuth(
     request,
-    (token) => api.images.list(token),
+    api.images.list,
   );
-  const { images = [] } = tempData;
-  console.log(images);
+  console.log('ACTION: returning');
+  const { images = [] } = dataResponse;
+
   // TODO id like a better typing solution for this response than a `satisfies`, but it may not be possible
   // TS infers types fine, but i want guard rails that prevent me from changing the response on accident
   return data({ images, loadCount } satisfies ActionResponse, { headers });

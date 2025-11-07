@@ -6,11 +6,14 @@ import { fetchGrantAuth, makeAuthCookies } from '~/shared/auth';
 export const loader: LoaderFunction = async ({ request }) => {
   const backendRes = await fetchGrantAuth();
 
-  const { accessToken, refreshToken } = await backendRes.json();
-  const { accessTokenCookie, refreshTokenCookie } = makeAuthCookies(
+  const { accessToken, expiresIn, refreshToken, refreshExpiresIn } =
+    await backendRes.json();
+  const { accessTokenCookie, refreshTokenCookie } = makeAuthCookies({
     accessToken,
+    expiresIn,
     refreshToken,
-  );
+    refreshExpiresIn,
+  });
 
   const url = new URL(request.url);
   const redirectTo = url.searchParams.get('redirectTo') || '/';
