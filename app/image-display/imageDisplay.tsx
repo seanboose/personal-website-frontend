@@ -2,6 +2,7 @@ import { type ImageData } from '@seanboose/personal-website-api-types';
 import { useEffect, useState } from 'react';
 import {
   type ActionFunctionArgs,
+  data,
   type LoaderFunctionArgs,
   useActionData,
   useFetcher,
@@ -9,7 +10,11 @@ import {
 } from 'react-router';
 
 import { api } from '~/shared/api';
-import { fetchRefreshAuth, requireAuthForLoader } from '~/shared/auth';
+import {
+  fetchRefreshAuth,
+  getAccessTokenFromRequest,
+  requireAuthForLoader,
+} from '~/shared/auth';
 
 interface LoaderResponse {
   images: ImageData[];
@@ -18,19 +23,69 @@ interface LoaderResponse {
 export const loader = async ({
   request,
 }: LoaderFunctionArgs): Promise<LoaderResponse> => {
-  const accessToken = await requireAuthForLoader(request);
-  console.log('about to request images finally');
-  const { images = [] } = await api.images.list(accessToken);
+  console.log('LOADER: requesting auth');
+  const oldAccessToken = await requireAuthForLoader(request);
+  // TODO need to do this in a catch
+
+  let images: ImageData[] = [];
+  try {
+    images = (await api.images.list(oldAccessToken)).images;
+  } catch (error) {
+    if (error instanceof Error) {
+      // TODO: need to make custom error types in api-types
+      console.log('LOADER: going to refresh auth');
+      const refreshResponse = await fetchRefreshAuth(request);
+      const { accessToken: newAccessToken } = await refreshResponse.json();
+      console.log('LOADER: refreshed auth, requesting images');
+      images = (await api.images.list(newAccessToken)).images;
+    } else {
+      console.log('LOADER: unexpected error encountered');
+      console.log(error);
+      throw error;
+    }
+  }
   return { images };
 };
+
+async function requestWithRefresh<T>(
+  request: Request,
+  // TODO doesnt handle requests with args
+  apiCall: (accessToken: string) => Promise<T>,
+): Promise<{ data: T; headers?: HeadersInit }> {
+  // TODO forcing this to be a string so i can use it, need to fix later
+  const accessToken = getAccessTokenFromRequest(request) || '';
+
+  try {
+    const data = await apiCall(accessToken);
+    return { data };
+  } catch (error) {
+    // TODO need to use new Error types here
+    if (error instanceof Error) {
+      const response = await fetchRefreshAuth(request);
+      const json = await response.json();
+      const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+        json;
+      // TODO copied from auth.init, need to refactor
+      const accessTokenCookie = `access_token=${newAccessToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${15 * 60}`;
+      const refreshTokenCookie = `refresh_token=${newRefreshToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${7 * 24 * 60 * 60}`;
+      const data = await apiCall(newAccessToken);
+      return {
+        data,
+        headers: [
+          ['Set-Cookie', accessTokenCookie],
+          ['Set-Cookie', refreshTokenCookie],
+        ],
+      };
+    }
+    throw Error;
+  }
+}
 
 interface ActionResponse extends LoaderResponse {
   loadCount: number;
 }
 
-export const action = async ({
-  request,
-}: ActionFunctionArgs): Promise<ActionResponse> => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   let loadCount = 0;
   const formData = await request.formData();
   const rawLoadCount = formData.get('loadCount');
@@ -38,12 +93,13 @@ export const action = async ({
     loadCount = parseInt(rawLoadCount, 10) + 1;
   }
 
-  const cookieHeader = request.headers.get('cookie') || '';
-  console.log('refreshing auth');
-  console.log(cookieHeader);
-  await fetchRefreshAuth(cookieHeader);
-  const { images = [] } = await api.images.list();
-  return { images, loadCount };
+  const { data: tempData, headers } = await requestWithRefresh(
+    request,
+    api.images.list,
+  );
+  const { images = [] } = tempData;
+  console.log(images);
+  return data({ images, loadCount } satisfies ActionResponse, { headers });
 };
 
 export default function ImageDisplay() {

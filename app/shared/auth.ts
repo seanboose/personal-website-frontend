@@ -1,4 +1,7 @@
-import { authAccessTokenName } from '@seanboose/personal-website-api-types';
+import {
+  authAccessTokenName,
+  authRefreshTokenName,
+} from '@seanboose/personal-website-api-types';
 import { redirect } from 'react-router';
 
 import { clientConfig, serverConfig } from './config';
@@ -31,14 +34,18 @@ export const fetchGrantAuth = async () => {
   return res;
 };
 
-export const fetchRefreshAuth = async (cookieHeader: string) => {
+export const fetchRefreshAuth = async (request: Request) => {
+  const cookieHeader = request.headers.get('cookie');
+  const refreshTokenRegex = new RegExp(`${authRefreshTokenName}=([^;]+)`);
+  const refreshToken = cookieHeader?.match(refreshTokenRegex)?.[1];
+
   const res = await fetch(refreshAuthUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Cookie: cookieHeader,
     },
     credentials: 'include',
+    body: JSON.stringify({ [authRefreshTokenName]: refreshToken }),
   });
 
   if (!res.ok) {
@@ -57,13 +64,20 @@ export const fetchRefreshAuth = async (cookieHeader: string) => {
  * @param request incoming client request, just pass it in from the loader/action
  */
 export const requireAuthForLoader = async (request: Request) => {
-  const cookieHeader = request.headers.get('cookie');
-  const accessTokenRegex = new RegExp(`${authAccessTokenName}=([^;]+)`);
-  const accessToken = cookieHeader?.match(accessTokenRegex)?.[1];
+  const accessToken = getAccessTokenFromRequest(request);
   if (!accessToken) {
     const url = new URL(request.url);
     const redirectTo = url.pathname + url.search;
     throw redirect(`/auth/init?redirectTo=${encodeURIComponent(redirectTo)}`);
   }
+  return accessToken;
+};
+
+export const getAccessTokenFromRequest = (
+  request: Request,
+): string | undefined => {
+  const cookieHeader = request.headers.get('cookie');
+  const accessTokenRegex = new RegExp(`${authAccessTokenName}=([^;]+)`);
+  const accessToken = cookieHeader?.match(accessTokenRegex)?.[1];
   return accessToken;
 };
