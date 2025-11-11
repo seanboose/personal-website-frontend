@@ -34,8 +34,8 @@ importers:
         specifier: ^7.7.1
         version: 7.9.4(@react-router/serve@7.9.4(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3))(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(vite@6.4.1(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2))
       '@seanboose/personal-website-api-types':
-        specifier: 1.0.11
-        version: 1.0.11
+        specifier: 1.0.12
+        version: 1.0.12
       '@tailwindcss/vite':
         specifier: ^4.1.4
         version: 4.1.16(vite@6.4.1(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2))
@@ -640,8 +640,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@seanboose/personal-website-api-types@1.0.11':
-    resolution: {integrity: sha512-tjd6MBB79I4iM10P2uP/dzu0Jw4Pfds7qNBqmjjiXa99goOs9dvcJu8rBRUrf5IBW0WoUazLjcKiIfLtd+4TVw==, tarball: https://npm.pkg.github.com/download/@seanboose/personal-website-api-types/1.0.11/6016af5154961cd8f8119a1e908f4f09812ae479}
+  '@seanboose/personal-website-api-types@1.0.12':
+    resolution: {integrity: sha512-NDZ3AZ9ipIIuiO3c7O3278J09CKkGPa7C5JgJdIxWBAGm7O5qudNvLIDpyQcfQA3wlwBLI2x+5CH7xmS/4Nvnw==, tarball: https://npm.pkg.github.com/download/@seanboose/personal-website-api-types/1.0.12/476785d1531c8edb6d285d496915a14a66b253fe}
 
   '@tailwindcss/node@4.1.16':
     resolution: {integrity: sha512-BX5iaSsloNuvKNHRN3k2RcCuTEgASTo77mofW0vmeHkfrDWaoFAFvNHpEgtu0eqyypcyiBkDWzSMxJhp3AUVcw==}
@@ -2145,6 +2145,9 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
+  zod@4.1.12:
+    resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
+
 snapshots:
 
   '@babel/code-frame@7.27.1':
@@ -2692,7 +2695,9 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.52.5':
     optional: true
 
-  '@seanboose/personal-website-api-types@1.0.11': {}
+  '@seanboose/personal-website-api-types@1.0.12':
+    dependencies:
+      zod: 4.1.12
 
   '@tailwindcss/node@4.1.16':
     dependencies:
@@ -4164,3 +4169,5 @@ snapshots:
       yargs-parser: 21.1.1
 
   yocto-queue@0.1.0: {}
+
+  zod@4.1.12: {}

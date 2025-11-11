@@ -3,14 +3,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "npm run lint && npm run build:ts",
+    "build": "npm run lint && npm run typecheck && npm run build:ts",
     "build:ts": "react-router build",
-    "dev": "concurrently -c yellow,cyan \"npm:dev:ts\" \"npm:lint:watch\"",
+    "dev": "concurrently -c yellow,cyan,magenta \"npm:dev:ts\" \"npm:lint:watch\" \"npm:typecheck:watch\"",
     "dev:ts": "react-router dev",
     "lint": "eslint app",
     "lint:watch": "nodemon --watch app --ext js,ts,jsx,tsx --delay 100ms --exec \"npm run lint\"",
     "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc"
+    "typecheck": "react-router typegen && tsc",
+    "typecheck:watch": "react-router typegen && tsc --noEmit --watch"
   },
   "dependencies": {
     "@react-router/node": "^7.7.1",
@@ -23,7 +24,7 @@
   "devDependencies": {
     "@eslint/js": "^9.34.0",
     "@react-router/dev": "^7.7.1",
-    "@seanboose/personal-website-api-types": "1.0.11",
+    "@seanboose/personal-website-api-types": "1.0.12",
     "@tailwindcss/vite": "^4.1.4",
     "@types/node": "^20",
     "@types/react": "^19.1.2",

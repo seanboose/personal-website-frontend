@@ -1,12 +1,11 @@
 import {
-  authAccessTokenName,
-  authRefreshTokenName,
+  AuthenticationError,
+  type AuthGrantRequestBody,
 } from '@seanboose/personal-website-api-types';
 import { redirect } from 'react-router';
 
 import { clientConfig, serverConfig } from './config';
 
-const authRequestClientKey = 'auth-request-client';
 const authRequestClient = 'personal-website-frontend';
 const grantAuthUrl = `${clientConfig.apiUrl}/api/auth/grant`;
 const refreshAuthUrl = `${clientConfig.apiUrl}/api/auth/refresh`;
@@ -42,8 +41,8 @@ export async function requestWithAuth<T>(
       const body = await apiCall(accessToken);
       return { body, accessToken };
     } catch (error) {
-      // TODO really need to create that new error type
-      if (!(error instanceof Error)) {
+      // we only want to deal with AuthenticationErrors; rethrow anything else
+      if (!(error instanceof AuthenticationError)) {
         throw error;
       }
     }
@@ -75,6 +74,9 @@ export async function requestWithAuth<T>(
 }
 
 export const fetchGrantAuth = async () => {
+  const body: AuthGrantRequestBody = {
+    authRequestClient,
+  };
   const res = await fetch(grantAuthUrl, {
     method: 'POST',
     headers: {
@@ -82,7 +84,7 @@ export const fetchGrantAuth = async () => {
       'internal-auth-key': serverConfig.authRequestKey,
     },
     credentials: 'include',
-    body: JSON.stringify({ [authRequestClientKey]: authRequestClient }),
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
@@ -106,13 +108,13 @@ export const fetchGrantAuth = async () => {
 
 const getAccessTokenFromRequest = (request: Request): string | undefined => {
   const cookieHeader = request.headers.get('cookie');
-  const accessTokenRegex = new RegExp(`${authAccessTokenName}=([^;]+)`);
+  const accessTokenRegex = new RegExp('accessToken=([^;]+)');
   return cookieHeader?.match(accessTokenRegex)?.[1];
 };
 
 const getRefreshTokenFromRequest = (request: Request): string | undefined => {
   const cookieHeader = request.headers.get('cookie');
-  const refreshTokenRegex = new RegExp(`${authRefreshTokenName}=([^;]+)`);
+  const refreshTokenRegex = new RegExp('refreshToken=([^;]+)');
   return cookieHeader?.match(refreshTokenRegex)?.[1];
 };
 
@@ -131,7 +133,7 @@ const fetchRefreshAuth = async (request: Request) => {
       'Content-Type': 'application/json',
     },
     credentials: 'include',
-    body: JSON.stringify({ [authRefreshTokenName]: refreshToken }),
+    body: JSON.stringify({ refreshToken }),
   });
 
   if (!res.ok) {
@@ -156,7 +158,7 @@ const makeAuthCookies = ({
   refreshToken: string;
   refreshExpiresIn: number;
 }) => {
-  const accessTokenCookie = `access_token=${accessToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${expiresIn}`;
-  const refreshTokenCookie = `refresh_token=${refreshToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${refreshExpiresIn}`;
+  const accessTokenCookie = `accessToken=${accessToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${expiresIn}`;
+  const refreshTokenCookie = `refreshToken=${refreshToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${refreshExpiresIn}`;
   return { accessTokenCookie, refreshTokenCookie };
 };
