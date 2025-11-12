@@ -14,6 +14,9 @@ importers:
       '@react-router/serve':
         specifier: ^7.7.1
         version: 7.9.4(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)
+      '@seanboose/personal-website-api-types':
+        specifier: 1.0.12
+        version: 1.0.12
       isbot:
         specifier: ^5.1.27
         version: 5.1.31
@@ -33,9 +36,6 @@ importers:
       '@react-router/dev':
         specifier: ^7.7.1
         version: 7.9.4(@react-router/serve@7.9.4(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3))(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(vite@6.4.1(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2))
-      '@seanboose/personal-website-api-types':
-        specifier: 1.0.12
-        version: 1.0.12
       '@tailwindcss/vite':
         specifier: ^4.1.4
         version: 4.1.16(vite@6.4.1(@types/node@20.19.23)(jiti@2.6.1)(lightningcss@1.30.2))
