@@ -1,4 +1,4 @@
-import { type ImageData } from '@seanboose/personal-website-api-types';
+import { type ImagesListResponse } from '@seanboose/personal-website-api-types';
 
 import { clientConfig } from '~/shared/config';
 
@@ -25,19 +25,11 @@ const apiFetch = async <T>(
   return res.json();
 };
 
-// TODO define these with oapi in api-types
-interface ImagesListResponse {
-  images: ImageData[];
-}
-
 export const api = {
   images: {
-    list: async (accessToken?: string) =>
-      apiFetch<ImagesListResponse>(
-        'images/list',
-        accessToken
-          ? { headers: { Authorization: `Bearer ${accessToken}` } }
-          : undefined,
-      ),
+    list: async (accessToken: string) =>
+      apiFetch<ImagesListResponse>('images/list', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }),
   },
 };
