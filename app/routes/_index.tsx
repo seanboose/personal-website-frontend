@@ -5,7 +5,7 @@ export function meta() {
   ];
 }
 
-export default function Home() {
+export default function Index() {
   return (
     <div>
       <p>HOME PAGE</p>

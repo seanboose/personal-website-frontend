@@ -14,17 +14,18 @@
     "typecheck:watch": "react-router typegen && tsc --noEmit --watch"
   },
   "dependencies": {
-    "@react-router/node": "^7.7.1",
-    "@react-router/serve": "^7.7.1",
+    "@react-router/fs-routes": "^7.9.5",
+    "@react-router/node": "^7.9.5",
+    "@react-router/serve": "^7.9.5",
     "@seanboose/personal-website-api-types": "1.0.12",
     "isbot": "^5.1.27",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router": "^7.7.1"
+    "react-router": "^7.9.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.34.0",
-    "@react-router/dev": "^7.7.1",
+    "@react-router/dev": "^7.9.5",
     "@tailwindcss/vite": "^4.1.4",
     "@types/node": "^20",
     "@types/react": "^19.1.2",
