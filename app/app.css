@@ -5,16 +5,65 @@
     'Outfit', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
-  --color-background: #d4c5a9;
-  --color-surface: #e8dcc4;
-  --color-primary: #4a4035;
-  --color-secondary: #6b5d4f;
-  --color-accent-orange: #c89b7b;
-  --color-accent-rose: #d4a89b;
-  --color-border: #8b7d6f;
+  /*--color-background: #d4c5a9;*/
+  /*--color-surface: #e8dcc4;*/
+  /*--color-primary: #4a4035;*/
+  /*--color-secondary: #6b5d4f;*/
+  /*--color-accent-orange: #c89b7b;*/
+  /*--color-accent-rose: #d4a89b;*/
+  /*--color-border: #8b7d6f;*/
+
+  --color-background: #dad5b7;
+  --color-background-selected: #6d6a5b;
+  --color-nav-unselected: #d0caaa;
+  --color-nav-selected: #8d8a77;
+  --color-surface: #efe7c3;
+
+  --color-text-body: #504e41;
+  --color-text-body-shaded: #8d8c78;
+  --color-text-selected: #e7e0c3;
+  --color-text-selected-shaded: #bab598;
+
+  --color-border: #544d43;
+  --color-border-strong: #534e3a;
+  --color-border-subtle: #bcb694;
+
+  --font-size-xs: 0.75rem; /* 12px - small labels, metadata */
+  --font-size-sm: 0.875rem; /* 14px - secondary text */
+  --font-size-base: 1rem; /* 16px - body text */
+  --font-size-lg: 1.125rem; /* 18px - emphasized body */
+  --font-size-xl: 1.25rem; /* 20px - small headings */
+  --font-size-2xl: 1.5rem; /* 24px - section headings */
+  --font-size-3xl: 1.875rem; /* 30px - page titles */
+  --font-size-4xl: 2.25rem; /* 36px - hero text */
 }
 
 html,
 body {
-  @apply bg-background text-primary;
+  @apply bg-background text-text-body;
+  @apply text-base;
+}
+
+h1 {
+  @apply text-3xl font-bold; /* 30px - "SKILLS" type headers */
+}
+
+h2 {
+  @apply text-2xl font-semibold; /* 24px - "Status" type headers */
+}
+
+h3 {
+  @apply text-xl font-semibold; /* 20px - subsections */
+}
+
+h4 {
+  @apply text-lg font-medium; /* 18px - small headers */
+}
+
+p {
+  @apply text-base; /* 16px - body text */
+}
+
+small {
+  @apply text-sm; /* 14px - helper text */
 }
