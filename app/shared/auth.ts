@@ -1,7 +1,4 @@
-import {
-  AuthenticationError,
-  type AuthGrantRequestBody,
-} from '@seanboose/personal-website-api-types';
+import { type AuthGrantRequestBody } from '@seanboose/personal-website-api-types';
 import { redirect } from 'react-router';
 
 import { clientConfig, serverConfig } from './config';
