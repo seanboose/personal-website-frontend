@@ -14,14 +14,17 @@
   /*--color-border: #8b7d6f;*/
 
   --color-background: #dad5b7;
+  --color-nav-unselected: #bbb599;
+
   --color-background-selected: #6d6a5b;
-  --color-nav-unselected: #d0caaa;
   --color-nav-selected: #8d8a77;
+
   --color-surface: #efe7c3;
 
   --color-text-body: #504e41;
-  --color-text-body-shaded: #8d8c78;
   --color-text-selected: #e7e0c3;
+
+  --color-text-body-shaded: #8d8c78;
   --color-text-selected-shaded: #bab598;
 
   --color-border: #544d43;
@@ -45,25 +48,25 @@ body {
 }
 
 h1 {
-  @apply text-3xl font-bold; /* 30px - "SKILLS" type headers */
+  @apply text-4xl font-normal;
 }
 
 h2 {
-  @apply text-2xl font-semibold; /* 24px - "Status" type headers */
+  @apply text-2xl font-normal;
 }
 
 h3 {
-  @apply text-xl font-semibold; /* 20px - subsections */
+  @apply text-xl font-normal;
 }
 
 h4 {
-  @apply text-lg font-medium; /* 18px - small headers */
+  @apply text-lg font-normal;
 }
 
 p {
-  @apply text-base; /* 16px - body text */
+  @apply text-base;
 }
 
 small {
-  @apply text-sm; /* 14px - helper text */
+  @apply text-sm;
 }

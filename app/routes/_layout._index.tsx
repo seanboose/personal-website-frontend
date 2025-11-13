@@ -1,4 +1,6 @@
+import { H1 } from '~/components/headers';
 import { RowStart } from '~/components/rowStart';
+import { TextBox } from '~/components/textBox';
 
 export function meta() {
   return [
@@ -9,13 +11,17 @@ export function meta() {
 
 export default function Index() {
   return (
-    <div className="mt-8">
-      <h1>HOME PAGE</h1>
-      <div className="flex flex-row">
+    <div className="flex flex-col gap-4">
+      <H1>sean boose</H1>
+      <div className="flex flex-row gap-4">
         <RowStart />
-        <div className="bg-surface border-border-subtle border-b-2 border-r-2">
-          <p>askdljadslkasd asdas das asd das</p>
-        </div>
+        <TextBox>
+          <p>
+            welcome to my website!
+            <br />
+            it's heavily under construction, so don't expect a ton yet
+          </p>
+        </TextBox>
       </div>
     </div>
   );

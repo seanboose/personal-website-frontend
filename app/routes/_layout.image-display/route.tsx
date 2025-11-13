@@ -9,6 +9,9 @@ import {
   useLoaderData,
 } from 'react-router';
 
+import { H1 } from '~/components/headers';
+import { RowStart } from '~/components/rowStart';
+import { TextBox } from '~/components/textBox';
 import { api } from '~/shared/api';
 import { requestWithAuth } from '~/shared/auth';
 
@@ -60,24 +63,34 @@ export default function ImageDisplay() {
   };
 
   return (
-    <main className="flex items-center justify-center pt-16 pb-4">
-      <div className="flex-1 flex flex-col items-center gap-16 min-h-0">
-        <p>behold, an image!</p>
-        {images[0] && (
-          <div key={images[0].fileName} className="p-4">
-            <img
-              src={images[0].url}
-              alt={images[0].fileName}
-              className="max-w-xs"
-            />
-          </div>
-        )}
-        <p>{`the image has been loaded ${loadCount} times!`}</p>
-        <button type="submit" onClick={handleReloadClick}>
-          load it again!
-        </button>
-        {fetcher.state === 'submitting' && <p>reloading...</p>}
+    <div className="flex flex-col gap-4">
+      <H1>image retriever</H1>
+      <div className="w-fit">
+        <div className="flex flex-row gap-4">
+          <RowStart />
+          <TextBox>
+            <div className="flex flex-col items-center justify-center">
+              <p>this is just a simple test for my auth flow</p>
+              <p>behold, an image!</p>
+              {images[0] && (
+                <div key={images[0].fileName} className="p-4">
+                  <img
+                    src={images[0].url}
+                    alt={images[0].fileName}
+                    className="max-w-xs"
+                  />
+                </div>
+              )}
+              <p>{`the image has been loaded ${loadCount} times!`}</p>
+              <button type="submit" onClick={handleReloadClick}>
+                {fetcher.state === 'submitting'
+                  ? 'reloading...'
+                  : 'load it again!'}
+              </button>
+            </div>
+          </TextBox>
+        </div>
       </div>
-    </main>
+    </div>
   );
 }

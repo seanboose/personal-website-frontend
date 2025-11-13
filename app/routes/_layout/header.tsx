@@ -15,7 +15,7 @@ export const Header = () => {
           <HeaderItem label={'images'} route={routes.imageDisplay} />
         </div>
       </div>
-      <div className="pl-10 pr-10">
+      <div className="pl-10 pr-10 mb-8">
         <NavBanner />
       </div>
     </>
