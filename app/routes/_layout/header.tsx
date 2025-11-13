@@ -10,7 +10,7 @@ export const Header = () => {
     <>
       <div className="border-b-2 border-border pt-6 pl-10 pr-10 overflow-x-auto">
         <div className="flex flex-row justify-start gap-8">
-          <RowStart />
+          <RowStart className={'mb-4'} />
           <HeaderItem label={'home'} route={routes.home} />
           <HeaderItem label={'images'} route={routes.imageDisplay} />
         </div>
