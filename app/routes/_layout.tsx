@@ -3,7 +3,7 @@ import { Outlet } from 'react-router';
 
 import { RowStart } from '~/components/rowStart';
 
-const tabs = ['HOME', 'BLOG', 'PORTFOLIO', 'IMAGES'];
+const tabs = ['home', 'blog', 'portfolio', 'images'];
 
 export default function Layout() {
   const [selected, setSelected] = useState<string>(tabs[0]);
@@ -15,10 +15,13 @@ export default function Layout() {
       <div className="border-b-2 border-border pt-6 pl-10 pr-10">
         <div className="flex flex-row justify-start gap-8">
           <RowStart />
-          <HeaderItem label="HOME" selected={selected} onClick={onClick} />
-          <HeaderItem label="BLOG" selected={selected} onClick={onClick} />
-          <HeaderItem label="PORTFOLIO" selected={selected} onClick={onClick} />
-          <HeaderItem label="IMAGES" selected={selected} onClick={onClick} />
+          {tabs.map((tab) => (
+            <HeaderItem
+              label={tab}
+              isSelected={selected === tab}
+              onClick={onClick}
+            />
+          ))}
         </div>
       </div>
       <div className="pl-10 pr-10">
@@ -31,14 +34,13 @@ export default function Layout() {
 
 const HeaderItem = ({
   label,
-  selected,
+  isSelected,
   onClick,
 }: {
   label: string;
-  selected: string;
+  isSelected: boolean;
   onClick: (label: string) => void;
 }) => {
-  const isSelected = selected === label;
   const text = isSelected
     ? 'text-text-selected-shaded'
     : 'text-text-body-shaded';
@@ -51,7 +53,7 @@ const HeaderItem = ({
       onClick={() => onClick(label)}
     >
       <div className={`w-4 h-4 mr-1 ${icon}`} />
-      <p className={text}>{label}</p>
+      <p className={text}>{label.toUpperCase()}</p>
     </button>
   );
 };
