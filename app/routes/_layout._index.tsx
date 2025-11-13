@@ -3,10 +3,7 @@ import { RowStart } from '~/components/rowStart';
 import { TextBox } from '~/components/textBox';
 
 export function meta() {
-  return [
-    { title: 'Sean Boose Party Bus' },
-    { name: 'description', content: 'Welcome to my site!!' },
-  ];
+  return [{ title: 'sean boose party bus' }];
 }
 
 export default function Index() {
