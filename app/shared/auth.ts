@@ -41,8 +41,12 @@ export async function requestWithAuth<T>(
       const body = await apiCall(accessToken);
       return { body, accessToken };
     } catch (error) {
-      // we only want to deal with AuthenticationErrors; rethrow anything else
-      if (!(error instanceof AuthenticationError)) {
+      const isUnauthorizedError =
+        error &&
+        typeof error === 'object' &&
+        'statusCode' in error &&
+        error.statusCode === 401;
+      if (!isUnauthorizedError) {
         throw error;
       }
     }
