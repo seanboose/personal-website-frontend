@@ -1,22 +1,24 @@
 import { useCallback, useState } from 'react';
-import { Outlet } from 'react-router';
 
 import { RowStart } from '~/components/rowStart';
 
+import { NavBanner } from './navBanner';
+
 const tabs = ['home', 'blog', 'portfolio', 'images'];
 
-export default function Layout() {
+export const Header = () => {
   const [selected, setSelected] = useState<string>(tabs[0]);
   const onClick = useCallback((label: string) => {
     setSelected(label);
   }, []);
   return (
     <>
-      <div className="border-b-2 border-border pt-6 pl-10 pr-10">
+      <div className="border-b-2 border-border pt-6 pl-10 pr-10 overflow-x-auto">
         <div className="flex flex-row justify-start gap-8">
           <RowStart />
           {tabs.map((tab) => (
             <HeaderItem
+              key={tab}
               label={tab}
               isSelected={selected === tab}
               onClick={onClick}
@@ -25,12 +27,11 @@ export default function Layout() {
         </div>
       </div>
       <div className="pl-10 pr-10">
-        <Outlet />
+        <NavBanner />
       </div>
-      <div className="border-t-2 border-primary fixed bottom-0 left-0 w-full h-10" />
     </>
   );
-}
+};
 
 const HeaderItem = ({
   label,
