@@ -23,7 +23,7 @@ export async function requestWithAuth<T>(
   apiCall: (accessToken: string) => Promise<T>,
   accessTokenOverride?: string,
 ): Promise<{
-  body: T;
+  body: Promise<T>;
   headers?: HeadersInit;
   accessToken: string;
 }> {
@@ -35,7 +35,7 @@ export async function requestWithAuth<T>(
 
   if (typeof accessToken !== 'undefined') {
     try {
-      const body = await apiCall(accessToken);
+      const body = apiCall(accessToken);
       return { body, accessToken };
     } catch (error) {
       const isUnauthorizedError =
@@ -63,7 +63,7 @@ export async function requestWithAuth<T>(
     refreshToken: newRefreshToken,
     refreshExpiresIn,
   });
-  const body = await apiCall(newAccessToken);
+  const body = apiCall(newAccessToken);
   return {
     body,
     headers: [

@@ -6,9 +6,9 @@
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
   --color-background: #dad5b7;
-  --color-nav-unselected: #bbb599;
-
   --color-background-selected: #6d6a5b;
+
+  --color-nav-unselected: #bbb599;
   --color-nav-selected: #8d8a77;
 
   --color-surface: #efe7c3;

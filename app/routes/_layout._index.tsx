@@ -1,6 +1,6 @@
 import { H1 } from '~/components/headers';
 import { RowStart } from '~/components/rowStart';
-import { TextBox } from '~/components/textBox';
+import { Surface } from '~/components/surface';
 
 export function meta() {
   return [{ title: 'sean boose party bus' }];
@@ -12,13 +12,13 @@ export default function Index() {
       <H1>sean boose</H1>
       <div className="flex flex-row gap-4">
         <RowStart />
-        <TextBox>
+        <Surface>
           <p>
             welcome to my website!
             <br />
             it's heavily under construction, so don't expect a ton yet
           </p>
-        </TextBox>
+        </Surface>
       </div>
     </div>
   );
