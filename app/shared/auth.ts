@@ -1,4 +1,7 @@
-import { type AuthGrantRequestBody } from '@seanboose/personal-website-api-types';
+import {
+  type AuthGrantRequestBody,
+  type AuthRefreshResponse,
+} from '@seanboose/personal-website-api-types';
 import { jwtDecode } from 'jwt-decode';
 import { redirect } from 'react-router';
 
@@ -8,9 +11,14 @@ const authRequestClient = 'personal-website-frontend';
 const grantAuthUrl = `${clientConfig.apiUrl}/api/auth/grant`;
 const refreshAuthUrl = `${clientConfig.apiUrl}/api/auth/refresh`;
 
-// we'll expire our tokens earlier than their actual expiration time
+// we'll expire client tokens earlier than their actual expiration time
 // this helps ensure we never send an expired token to the api
-const TOKEN_EXPIRATION_BUFFER_S = 30;
+const tokenExpirationBufferS = 30;
+
+let refreshPromise: Promise<{
+  accessToken: string;
+  headers: HeadersInit;
+}> | null = null;
 
 /**
  * make a request to an api endpoint that requires authentication.
@@ -34,47 +42,74 @@ export async function requestWithAuth<T>(
 }> {
   const accessToken = accessTokenOverride || getAccessTokenFromRequest(request);
   const refreshToken = getRefreshTokenFromRequest(request);
-  if (!refreshToken) {
+  const hasSession = !!refreshToken;
+  if (!hasSession) {
     redirectToLogin(request);
   }
 
-  if (typeof accessToken !== 'undefined' && isAccessTokenValid(accessToken)) {
+  if (accessToken && isAccessTokenValid(accessToken)) {
     const body = apiCall(accessToken);
     return { body, accessToken };
   }
 
-  const response = await fetchRefreshAuth(request);
-  const json = await response.json();
-  const {
-    accessToken: newAccessToken,
-    expiresIn,
-    refreshToken: newRefreshToken,
-    refreshExpiresIn,
-  } = json;
-  const { accessTokenCookie, refreshTokenCookie } = makeAuthCookies({
-    accessToken: newAccessToken,
-    expiresIn,
-    refreshToken: newRefreshToken,
-    refreshExpiresIn,
-  });
+  if (!refreshPromise) {
+    refreshPromise = refreshAuth(request);
+  }
+  const { accessToken: newAccessToken, headers } = await refreshPromise;
+
   const body = apiCall(newAccessToken);
   return {
     body,
-    headers: [
-      ['Set-Cookie', accessTokenCookie],
-      ['Set-Cookie', refreshTokenCookie],
-    ],
+    headers,
     accessToken: newAccessToken,
   };
 }
 
-const isAccessTokenValid = (accessToken: string) => {
-  const decoded = jwtDecode<{ exp: number }>(accessToken);
-  const tokenExpiresAtMs = (decoded.exp - TOKEN_EXPIRATION_BUFFER_S) * 1000;
-  return Date.now() < tokenExpiresAtMs;
+const redirectToLogin = (request: Request) => {
+  const url = new URL(request.url);
+  const redirectTo = url.pathname + url.search;
+  throw redirect(`/auth/init?redirectTo=${encodeURIComponent(redirectTo)}`);
 };
 
-export const fetchGrantAuth = async () => {
+export const requestAuth = async () => {
+  const { accessToken, expiresIn, refreshToken, refreshExpiresIn } =
+    await fetchGrantAuth();
+  const { accessTokenCookie, refreshTokenCookie } = makeAuthCookies({
+    accessToken,
+    expiresIn,
+    refreshToken,
+    refreshExpiresIn,
+  });
+  const headers: HeadersInit = [
+    ['Set-Cookie', accessTokenCookie],
+    ['Set-Cookie', refreshTokenCookie],
+  ];
+  return { headers };
+};
+
+const refreshAuth = async (request: Request) => {
+  try {
+    const json = await fetchRefreshAuth(request);
+    const { accessToken, expiresIn, refreshToken, refreshExpiresIn } = json;
+    const { accessTokenCookie, refreshTokenCookie } = makeAuthCookies({
+      accessToken,
+      expiresIn,
+      refreshToken,
+      refreshExpiresIn,
+    });
+    const headers: HeadersInit = [
+      ['Set-Cookie', accessTokenCookie],
+      ['Set-Cookie', refreshTokenCookie],
+    ];
+    return { accessToken, headers };
+  } finally {
+    setTimeout(() => {
+      refreshPromise = null;
+    }, 100);
+  }
+};
+
+const fetchGrantAuth = async () => {
   const body: AuthGrantRequestBody = {
     authRequestClient,
   };
@@ -96,36 +131,12 @@ export const fetchGrantAuth = async () => {
     );
   }
 
-  const { accessToken, expiresIn, refreshToken, refreshExpiresIn } =
-    await res.json();
-  const { accessTokenCookie, refreshTokenCookie } = makeAuthCookies({
-    accessToken,
-    expiresIn,
-    refreshToken,
-    refreshExpiresIn,
-  });
-  return { accessTokenCookie, refreshTokenCookie };
+  return res.json();
 };
 
-const getAccessTokenFromRequest = (request: Request): string | undefined => {
-  const cookieHeader = request.headers.get('cookie');
-  const accessTokenRegex = new RegExp('accessToken=([^;]+)');
-  return cookieHeader?.match(accessTokenRegex)?.[1];
-};
-
-const getRefreshTokenFromRequest = (request: Request): string | undefined => {
-  const cookieHeader = request.headers.get('cookie');
-  const refreshTokenRegex = new RegExp('refreshToken=([^;]+)');
-  return cookieHeader?.match(refreshTokenRegex)?.[1];
-};
-
-const redirectToLogin = (request: Request) => {
-  const url = new URL(request.url);
-  const redirectTo = url.pathname + url.search;
-  throw redirect(`/auth/init?redirectTo=${encodeURIComponent(redirectTo)}`);
-};
-
-const fetchRefreshAuth = async (request: Request) => {
+const fetchRefreshAuth = async (
+  request: Request,
+): Promise<AuthRefreshResponse> => {
   const refreshToken = getRefreshTokenFromRequest(request);
 
   const res = await fetch(refreshAuthUrl, {
@@ -145,7 +156,25 @@ const fetchRefreshAuth = async (request: Request) => {
     );
   }
 
-  return res;
+  return res.json();
+};
+
+const isAccessTokenValid = (accessToken: string) => {
+  const decoded = jwtDecode<{ exp: number }>(accessToken);
+  const tokenExpiresAtMs = (decoded.exp - tokenExpirationBufferS) * 1000;
+  return Date.now() < tokenExpiresAtMs;
+};
+
+const getAccessTokenFromRequest = (request: Request): string | undefined => {
+  const cookieHeader = request.headers.get('cookie');
+  const accessTokenRegex = new RegExp('accessToken=([^;]+)');
+  return cookieHeader?.match(accessTokenRegex)?.[1];
+};
+
+const getRefreshTokenFromRequest = (request: Request): string | undefined => {
+  const cookieHeader = request.headers.get('cookie');
+  const refreshTokenRegex = new RegExp('refreshToken=([^;]+)');
+  return cookieHeader?.match(refreshTokenRegex)?.[1];
 };
 
 const makeAuthCookies = ({
@@ -159,8 +188,8 @@ const makeAuthCookies = ({
   refreshToken: string;
   refreshExpiresIn: number;
 }) => {
-  const accessExpiration = expiresIn - TOKEN_EXPIRATION_BUFFER_S;
-  const refreshExpiration = refreshExpiresIn - TOKEN_EXPIRATION_BUFFER_S;
+  const accessExpiration = expiresIn - tokenExpirationBufferS;
+  const refreshExpiration = refreshExpiresIn - tokenExpirationBufferS;
   const accessTokenCookie = `accessToken=${accessToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${accessExpiration}`;
   const refreshTokenCookie = `refreshToken=${refreshToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${refreshExpiration}`;
   return { accessTokenCookie, refreshTokenCookie };
