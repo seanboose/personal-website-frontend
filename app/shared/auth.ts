@@ -1,4 +1,5 @@
 import { type AuthGrantRequestBody } from '@seanboose/personal-website-api-types';
+import { jwtDecode } from 'jwt-decode';
 import { redirect } from 'react-router';
 
 import { clientConfig, serverConfig } from './config';
@@ -6,6 +7,10 @@ import { clientConfig, serverConfig } from './config';
 const authRequestClient = 'personal-website-frontend';
 const grantAuthUrl = `${clientConfig.apiUrl}/api/auth/grant`;
 const refreshAuthUrl = `${clientConfig.apiUrl}/api/auth/refresh`;
+
+// we'll expire our tokens earlier than their actual expiration time
+// this helps ensure we never send an expired token to the api
+const TOKEN_EXPIRATION_BUFFER_S = 30;
 
 /**
  * make a request to an api endpoint that requires authentication.
@@ -33,20 +38,9 @@ export async function requestWithAuth<T>(
     redirectToLogin(request);
   }
 
-  if (typeof accessToken !== 'undefined') {
-    try {
-      const body = apiCall(accessToken);
-      return { body, accessToken };
-    } catch (error) {
-      const isUnauthorizedError =
-        error &&
-        typeof error === 'object' &&
-        'statusCode' in error &&
-        error.statusCode === 401;
-      if (!isUnauthorizedError) {
-        throw error;
-      }
-    }
+  if (typeof accessToken !== 'undefined' && isAccessTokenValid(accessToken)) {
+    const body = apiCall(accessToken);
+    return { body, accessToken };
   }
 
   const response = await fetchRefreshAuth(request);
@@ -73,6 +67,12 @@ export async function requestWithAuth<T>(
     accessToken: newAccessToken,
   };
 }
+
+const isAccessTokenValid = (accessToken: string) => {
+  const decoded = jwtDecode<{ exp: number }>(accessToken);
+  const tokenExpiresAtMs = (decoded.exp - TOKEN_EXPIRATION_BUFFER_S) * 1000;
+  return Date.now() < tokenExpiresAtMs;
+};
 
 export const fetchGrantAuth = async () => {
   const body: AuthGrantRequestBody = {
@@ -159,7 +159,9 @@ const makeAuthCookies = ({
   refreshToken: string;
   refreshExpiresIn: number;
 }) => {
-  const accessTokenCookie = `accessToken=${accessToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${expiresIn}`;
-  const refreshTokenCookie = `refreshToken=${refreshToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${refreshExpiresIn}`;
+  const accessExpiration = expiresIn - TOKEN_EXPIRATION_BUFFER_S;
+  const refreshExpiration = refreshExpiresIn - TOKEN_EXPIRATION_BUFFER_S;
+  const accessTokenCookie = `accessToken=${accessToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${accessExpiration}`;
+  const refreshTokenCookie = `refreshToken=${refreshToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${refreshExpiration}`;
   return { accessTokenCookie, refreshTokenCookie };
 };
