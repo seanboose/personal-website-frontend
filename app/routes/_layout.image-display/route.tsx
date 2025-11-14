@@ -1,11 +1,10 @@
 import { type ImageData } from '@seanboose/personal-website-api-types';
-import { type ReactNode, Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import {
   type ActionFunctionArgs,
   Await,
   data,
   type LoaderFunctionArgs,
-  useActionData,
   useFetcher,
   useLoaderData,
 } from 'react-router';
@@ -19,20 +18,12 @@ import { api } from '~/shared/api';
 import { requestWithAuth } from '~/shared/auth';
 
 interface LoaderResponse {
-  images: ImageData[];
+  body: Promise<{ images: ImageData[] }>;
 }
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { body, headers } = await requestWithAuth(request, api.images.list);
-  // const imagesPromise = body.then(({ images }) => images);
-  // const { images = [] } = body;
-  // return data({ images } satisfies LoaderResponse, { headers });
-  // const imagesPromise = requestWithAuth(request, api.images.list).then(
-  //   ({ body, headers }) => {
-  //     const { images = [] } = body;
-  //   },
-  // );
-  return data({ body }, { headers });
+  return data({ body } satisfies LoaderResponse, { headers });
 };
 
 interface ActionResponse extends LoaderResponse {
@@ -48,34 +39,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   }
 
   const { body, headers } = await requestWithAuth(request, api.images.list);
-  const imagesPromise = body;
-  // const imagesPromise = body.then(({ images }) => images);
-  return data({ imagesPromise, loadCount }, { headers });
-  // const { images = [] } = body;
-  // return data({ images, loadCount } satisfies ActionResponse, { headers });
-
-  // const imagesPromise = requestWithAuth(request, api.images.list).then(
-  //   ({ body, headers }) => {
-  //     const { images = [] } = body;
-  //     return data({ images, loadCount } satisfies ActionResponse, { headers });
-  //   },
-  // );
-  //
-  // // TODO ActionResponse typing does not include a promise
-  // return data(
-  //   { imagesPromise, loadCount },
-  //   {
-  //     headers,
-  //   },
-  // );
+  return data({ body, loadCount } satisfies ActionResponse, { headers });
 };
 
 export default function ImageDisplay() {
-  const { body: loaderImages } = useLoaderData<typeof loader>();
-  // const actionResponse = useActionData<typeof action>();
-  const fetcher = useFetcher();
+  const { body: loaderBody } = useLoaderData<typeof loader>();
+  const fetcher = useFetcher<typeof action>();
+  const actionBody = fetcher.data?.body || Promise.resolve({ images: [] });
   const [loadCount, setLoadCount] = useState<number>(1);
-  // const images: ImageData[] = actionResponse?.images ?? loaderImages;
 
   useEffect(() => {
     if (typeof fetcher.data?.loadCount === 'number') {
@@ -108,20 +79,11 @@ export default function ImageDisplay() {
             </button>
           </div>
         </Surface>
-        <HeaderedSurface header="The Image">
-          <div className="w-xs flex flex-col gap-4">
-            <p>behold, an image!</p>
-            <Suspense fallback={<ImageContainer />}>
-              <Await resolve={loaderImages}>
-                {({ images }) =>
-                  images[0] && <ImageContainer image={images[0]} />
-                }
-              </Await>
-            </Suspense>
-            <Divider />
-            <p>{`the image has been loaded ${loadCount} times!`}</p>
-          </div>
-        </HeaderedSurface>
+        <ImageSurface
+          actionBody={actionBody}
+          loaderBody={loaderBody}
+          loadCount={loadCount}
+        />
       </div>
     </div>
   );
@@ -146,5 +108,55 @@ const ImageContainer = ({
         <div className="grid place-items-center h-full">Loading...</div>
       )}
     </div>
+  );
+};
+
+const ImageSurface = ({
+  actionBody,
+  loaderBody,
+  loadCount,
+}: {
+  actionBody: ActionResponse['body'];
+  loaderBody: LoaderResponse['body'];
+  loadCount: number;
+}) => {
+  return (
+    <HeaderedSurface header="The Image">
+      <div className="w-xs flex flex-col gap-4">
+        <p>behold, an image!</p>
+        <Suspense fallback={<ImageContainer />}>
+          <Await resolve={loaderBody}>
+            {({ images: loaderImages }) => (
+              <Suspense fallback={<ImageContainer />}>
+                <Await resolve={actionBody}>
+                  {({ images: actionImages }) => {
+                    let image = loaderImages[0];
+                    let isAction = false;
+                    if (actionImages[0]) {
+                      image = actionImages[0];
+                      isAction = !!actionImages[0];
+                    }
+                    return (
+                      image && (
+                        <div>
+                          <ImageContainer image={image} />
+                          <p>
+                            {isAction
+                              ? 'image is from the action'
+                              : 'image is from the loader'}
+                          </p>
+                        </div>
+                      )
+                    );
+                  }}
+                </Await>
+              </Suspense>
+            )}
+          </Await>
+        </Suspense>
+        <Divider />
+        <p>{`the image has been loaded ${loadCount} times!`}</p>
+      </div>
+    </HeaderedSurface>
   );
 };
