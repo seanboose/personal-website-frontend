@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router';
 
 import { RowStart } from '~/components/rowStart';
-import { routes } from '~/routes';
+import { paths } from '~/paths';
 
 import { NavBanner } from './navBanner';
 
@@ -11,8 +11,8 @@ export const Header = () => {
       <div className="border-b-2 border-border pt-6 pl-10 pr-10 overflow-x-auto">
         <div className="flex flex-row justify-start gap-8">
           <RowStart className={'mb-4'} />
-          <HeaderItem label={'home'} route={routes.home} />
-          <HeaderItem label={'images'} route={routes.imageDisplay} />
+          <HeaderItem label={'home'} route={paths.home} />
+          <HeaderItem label={'images'} route={paths.imageDisplay} />
         </div>
       </div>
       <div className="pl-10 pr-10">
