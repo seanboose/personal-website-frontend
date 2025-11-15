@@ -13,11 +13,13 @@ export default function Index() {
       <div className="flex flex-row gap-4">
         <RowStart />
         <Surface>
-          <p>
-            welcome to my website!
-            <br />
-            it's heavily under construction, so don't expect a ton yet
-          </p>
+          <div className="w-sm">
+            <p>
+              welcome to my website!
+              <br />
+              it's heavily under construction, so don't expect a ton yet
+            </p>
+          </div>
         </Surface>
       </div>
     </div>
