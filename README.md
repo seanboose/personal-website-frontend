@@ -16,7 +16,7 @@ urls
 
 - production: https://personal-website-frontend-production.vercel.app
 - staging: https://personal-website-frontend-staging.vercel.app
-- <anyBranch>: https://personal-website-frontend-<anyBranch>.vercel.app
+- \<anyBranch>: https://personal-website-frontend-\<anyBranch>.vercel.app
 
 # related repos
 
@@ -29,3 +29,5 @@ urls
 - serve random ads on those posts
 - attribute impressions/clicks of those ads
 - generate api schema with oapi to keep client and api synchronized
+- art gallery tab so i can get off of instagram
+- 3d models tab (3d printer stuff)
