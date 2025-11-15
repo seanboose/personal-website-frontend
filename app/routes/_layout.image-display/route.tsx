@@ -9,6 +9,7 @@ import {
   useLoaderData,
 } from 'react-router';
 
+import { Button } from '~/components/button';
 import { Divider } from '~/components/divider';
 import { HeaderedSurface } from '~/components/headeredSurface';
 import { H1 } from '~/components/headers';
@@ -66,28 +67,78 @@ export default function ImageDisplay() {
       <div className="flex flex-col md:flex-row gap-4 w-fit">
         <RowStart />
         <Surface>
-          <div className="flex flex-col items-center justify-center gap-4 mw-md">
+          <div className="flex flex-col gap-4 w-sm">
             <p>this is just a simple test for my auth flow</p>
             <p>
               it hits my backend, which shuts down due to inactivity. don't be
               surprised if there's a delay on initial access
             </p>
-            <button type="submit" onClick={handleReloadClick}>
+            <Button type="submit" onClick={handleReloadClick}>
               {fetcher.state === 'submitting'
                 ? 'reloading...'
                 : 'load it again!'}
-            </button>
+            </Button>
+            <Divider />
+            <p>{`the image has been loaded ${loadCount} times!`}</p>
           </div>
         </Surface>
-        <ImageSurface
-          actionBody={actionBody}
-          loaderBody={loaderBody}
-          loadCount={loadCount}
-        />
+        <ImageSurface actionBody={actionBody} loaderBody={loaderBody} />
       </div>
     </div>
   );
 }
+
+const ImageSurface = ({
+  actionBody,
+  loaderBody,
+}: {
+  actionBody: ActionResponse['body'];
+  loaderBody: LoaderResponse['body'];
+}) => {
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [imageSource, setImageSource] = useState<'loader' | 'action'>('loader');
+  return (
+    <HeaderedSurface header="The Image">
+      <div className="w-xs flex flex-col gap-4">
+        <p>{`behold, an image${isImageLoaded ? (imageSource === 'loader' ? ' from the loader!' : ' from the action!') : '...'}`}</p>
+        <Suspense fallback={<ImageContainer />}>
+          <Await resolve={loaderBody}>
+            {({ images: loaderImages }) => (
+              <Suspense fallback={<ImageContainer />}>
+                <Await resolve={actionBody}>
+                  {({ images: actionImages }) => {
+                    let image = loaderImages[0];
+                    if (!isImageLoaded && image) {
+                      setIsImageLoaded(true);
+                    }
+                    let isAction = false;
+                    if (actionImages[0]) {
+                      image = actionImages[0];
+                      isAction = !!actionImages[0];
+                      setImageSource('action');
+                    }
+                    return (
+                      image && (
+                        <div>
+                          <ImageContainer image={image} />
+                          <p>
+                            {isAction
+                              ? 'image is from the action'
+                              : 'image is from the loader'}
+                          </p>
+                        </div>
+                      )
+                    );
+                  }}
+                </Await>
+              </Suspense>
+            )}
+          </Await>
+        </Suspense>
+      </div>
+    </HeaderedSurface>
+  );
+};
 
 const ImageContainer = ({
   className = '',
@@ -108,55 +159,5 @@ const ImageContainer = ({
         <div className="grid place-items-center h-full">Loading...</div>
       )}
     </div>
-  );
-};
-
-const ImageSurface = ({
-  actionBody,
-  loaderBody,
-  loadCount,
-}: {
-  actionBody: ActionResponse['body'];
-  loaderBody: LoaderResponse['body'];
-  loadCount: number;
-}) => {
-  return (
-    <HeaderedSurface header="The Image">
-      <div className="w-xs flex flex-col gap-4">
-        <p>behold, an image!</p>
-        <Suspense fallback={<ImageContainer />}>
-          <Await resolve={loaderBody}>
-            {({ images: loaderImages }) => (
-              <Suspense fallback={<ImageContainer />}>
-                <Await resolve={actionBody}>
-                  {({ images: actionImages }) => {
-                    let image = loaderImages[0];
-                    let isAction = false;
-                    if (actionImages[0]) {
-                      image = actionImages[0];
-                      isAction = !!actionImages[0];
-                    }
-                    return (
-                      image && (
-                        <div>
-                          <ImageContainer image={image} />
-                          <p>
-                            {isAction
-                              ? 'image is from the action'
-                              : 'image is from the loader'}
-                          </p>
-                        </div>
-                      )
-                    );
-                  }}
-                </Await>
-              </Suspense>
-            )}
-          </Await>
-        </Suspense>
-        <Divider />
-        <p>{`the image has been loaded ${loadCount} times!`}</p>
-      </div>
-    </HeaderedSurface>
   );
 };
