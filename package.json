@@ -7,6 +7,7 @@
     "build": "pnpm run lint && pnpm run typecheck && pnpm run build:prod",
     "build:prod": "react-router build -m production",
     "build:local": "react-router build -m development",
+    "build:local-docker": "dotenv -c development -- docker-compose build",
     "dev": "concurrently -c yellow,cyan,magenta \"pnpm:dev:ts\" \"pnpm:lint:watch\" \"pnpm:typecheck:watch\"",
     "dev:ts": "react-router dev",
     "format": "prettier --write .",
@@ -15,10 +16,13 @@
     "start": "pnpm run start:prod",
     "start:prod": "react-router-serve ./build/server/index.js",
     "start:local": "dotenv -c development -- react-router-serve ./build/server/index.js",
+    "start:local-docker": "dotenv -c development -- docker-compose up",
+    "stop:local-docker": "docker-compose down",
     "typecheck": "react-router typegen && tsc",
     "typecheck:watch": "react-router typegen && tsc --noEmit --watch"
   },
   "dependencies": {
+    "@react-router/dev": "^7.9.5",
     "@react-router/node": "^7.9.5",
     "@react-router/serve": "^7.9.5",
     "@seanboose/personal-website-api-types": "1.0.12",
@@ -30,7 +34,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.34.0",
-    "@react-router/dev": "^7.9.5",
     "@tailwindcss/vite": "^4.1.4",
     "@types/node": "^20",
     "@types/react": "^19.1.2",
