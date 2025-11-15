@@ -16,11 +16,7 @@ const apiFetch = async <T>(
     headers,
   });
   if (!res.ok) {
-    const json = await res.json();
-    const message = json?.message;
-    throw new Error(
-      `API request failed with status=${res.status}, message="${message}"`,
-    );
+    throw await res.json();
   }
   return res.json();
 };

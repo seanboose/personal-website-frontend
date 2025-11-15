@@ -1,15 +1,64 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans:
+    'Outfit', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  --color-background: #dad5b7;
+  --color-background-selected: #6d6a5b;
+
+  --color-nav-unselected: #bbb599;
+  --color-nav-selected: #8d8a77;
+
+  --color-surface: #efe7c3;
+
+  --color-text-body: #504e41;
+  --color-text-selected: #e7e0c3;
+
+  --color-text-body-shaded: #8d8c78;
+  --color-text-selected-shaded: #bab598;
+
+  --color-border: #544d43;
+  --color-border-strong: #534e3a;
+  --color-border-subtle: #bcb694;
+
+  --font-size-xs: 0.75rem; /* 12px - small labels, metadata */
+  --font-size-sm: 0.875rem; /* 14px - secondary text */
+  --font-size-base: 1rem; /* 16px - body text */
+  --font-size-lg: 1.125rem; /* 18px - emphasized body */
+  --font-size-xl: 1.25rem; /* 20px - small headings */
+  --font-size-2xl: 1.5rem; /* 24px - section headings */
+  --font-size-3xl: 1.875rem; /* 30px - page titles */
+  --font-size-4xl: 2.25rem; /* 36px - hero text */
 }
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  @apply bg-background text-text-body;
+  @apply text-base;
+}
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+h1 {
+  @apply text-4xl font-normal;
+}
+
+h2 {
+  @apply text-2xl font-normal;
+}
+
+h3 {
+  @apply text-xl font-normal;
+}
+
+h4 {
+  @apply text-lg font-normal;
+}
+
+p {
+  @apply text-base;
+}
+
+small {
+  @apply text-sm;
 }
