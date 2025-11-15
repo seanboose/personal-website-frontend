@@ -52,10 +52,6 @@ export default function ImageDisplay() {
         <Surface>
           <div className="flex flex-col gap-4 w-sm">
             <p>this is just a simple test for my auth flow</p>
-            <p>
-              it hits my backend, which shuts down due to inactivity. don't be
-              surprised if there's a delay on initial access
-            </p>
             <Button type="submit" onClick={handleReloadClick}>
               {fetcher.state === 'submitting'
                 ? 'reloading...'

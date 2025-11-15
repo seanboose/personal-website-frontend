@@ -14,9 +14,9 @@ any changes to other branches deploy to preview instances.
 
 urls
 
-- production: https://personal-website-frontend-production.vercel.app
-- staging: https://personal-website-frontend-staging.vercel.app
-- \<anyBranch>: https://personal-website-frontend-\<anyBranch>.vercel.app
+- production: https://personal-website-frontend-production.up.railway.app/
+- staging: https://personal-website-frontend-staging.up.railway.app/
+
 
 # related repos
 
