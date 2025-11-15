@@ -1,5 +1,5 @@
 import { type ImageData } from '@seanboose/personal-website-api-types';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useCallback, useState } from 'react';
 import {
   type ActionFunctionArgs,
   Await,
@@ -27,39 +27,22 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   return data({ body } satisfies LoaderResponse, { headers });
 };
 
-interface ActionResponse extends LoaderResponse {
-  loadCount: number;
-}
+type ActionResponse = LoaderResponse;
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  let loadCount = 0;
-  const formData = await request.formData();
-  const rawLoadCount = formData.get('loadCount');
-  if (typeof rawLoadCount === 'string') {
-    loadCount = parseInt(rawLoadCount, 10) + 1;
-  }
-
   const { body, headers } = await requestWithAuth(request, api.images.list);
-  return data({ body, loadCount } satisfies ActionResponse, { headers });
+  return data({ body } satisfies ActionResponse, { headers });
 };
 
 export default function ImageDisplay() {
   const { body: loaderBody } = useLoaderData<typeof loader>();
   const fetcher = useFetcher<typeof action>();
   const actionBody = fetcher.data?.body || Promise.resolve({ images: [] });
-  const [loadCount, setLoadCount] = useState<number>(1);
 
-  useEffect(() => {
-    if (typeof fetcher.data?.loadCount === 'number') {
-      setLoadCount(fetcher.data?.loadCount);
-    }
-  }, [fetcher.data?.loadCount]);
-
-  const handleReloadClick = () => {
+  const handleReloadClick = useCallback(() => {
     const formData = new FormData();
-    formData.set('loadCount', `${loadCount}`);
     fetcher.submit(formData, { method: 'post' });
-  };
+  }, [fetcher]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -79,8 +62,8 @@ export default function ImageDisplay() {
                 : 'load it again!'}
             </Button>
             <Divider />
-            <p>{`the image has been loaded ${loadCount} times!`}</p>
           </div>
+          <p>{`the action is... ${fetcher.state}`}</p>
         </Surface>
         <ImageSurface actionBody={actionBody} loaderBody={loaderBody} />
       </div>
@@ -96,11 +79,10 @@ const ImageSurface = ({
   loaderBody: LoaderResponse['body'];
 }) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
-  const [imageSource, setImageSource] = useState<'loader' | 'action'>('loader');
   return (
     <HeaderedSurface header="The Image">
       <div className="w-xs flex flex-col gap-4">
-        <p>{`behold, an image${isImageLoaded ? (imageSource === 'loader' ? ' from the loader!' : ' from the action!') : '...'}`}</p>
+        <p>{`behold${isImageLoaded ? ', an image!' : '...'}`}</p>
         <Suspense fallback={<ImageContainer />}>
           <Await resolve={loaderBody}>
             {({ images: loaderImages }) => (
@@ -115,11 +97,10 @@ const ImageSurface = ({
                     if (actionImages[0]) {
                       image = actionImages[0];
                       isAction = !!actionImages[0];
-                      setImageSource('action');
                     }
                     return (
                       image && (
-                        <div>
+                        <div className={'flex flex-col gap-4'}>
                           <ImageContainer image={image} />
                           <p>
                             {isAction
