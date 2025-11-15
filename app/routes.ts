@@ -13,7 +13,7 @@ export default [
   route('auth/init', 'routes/auth.init.ts'),
 ] satisfies RouteConfig;
 
-export const paths = {
+export const routes = {
   imageDisplay: '/image-display',
   home: '/',
   login: '/auth/init',
