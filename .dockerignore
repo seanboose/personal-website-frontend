@@ -1,4 +1,3 @@
-!.env.production
 *.log
 .DS_Store
 .env*
