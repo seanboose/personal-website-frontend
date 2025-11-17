@@ -1,0 +1,11 @@
+services:
+  web:
+    build:
+      context: .
+      args:
+        GITHUB_PACKAGES_PAT: ${GITHUB_PACKAGES_PAT}
+        VITE_API_URL: ${VITE_API_URL}
+    ports:
+      - "3000:3000"
+    environment:
+      - AUTH_REQUEST_KEY=${AUTH_REQUEST_KEY}
