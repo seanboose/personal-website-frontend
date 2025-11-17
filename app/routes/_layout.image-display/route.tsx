@@ -12,9 +12,9 @@ import {
 import { Button } from '~/components/button';
 import { Divider } from '~/components/divider';
 import { HeaderedSurface } from '~/components/headeredSurface';
-import { H1 } from '~/components/headers';
 import { RowStart } from '~/components/rowStart';
 import { Surface } from '~/components/surface';
+import { H1 } from '~/components/typography';
 import { api } from '~/shared/api';
 import { requestWithAuth } from '~/shared/auth';
 

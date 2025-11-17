@@ -8,11 +8,13 @@ import { NavBanner } from './navBanner';
 export const Header = () => {
   return (
     <>
-      <div className="border-b-2 border-border pt-6 pl-10 pr-10 overflow-x-auto">
-        <div className="flex flex-row justify-start gap-8">
-          <RowStart className={'mb-4'} />
-          <HeaderItem label={'home'} route={paths.home} />
-          <HeaderItem label={'images'} route={paths.imageDisplay} />
+      <div className="border-b-2 border-border pt-6 overflow-x-auto">
+        <div className="w-full max-w-6xl mx-auto px-4">
+          <div className="flex flex-row justify-start gap-8">
+            <RowStart className={'mb-4'} />
+            <HeaderItem label={'home'} route={paths.home} />
+            <HeaderItem label={'images'} route={paths.imageDisplay} />
+          </div>
         </div>
       </div>
       <div className="pl-10 pr-10">
