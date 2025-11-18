@@ -16,8 +16,8 @@ export default function Index() {
       <div className="flex flex-col lg:flex-row gap-4">
         <RowStart />
         <Surface className="flex-2">
-          <h2>WHO AM I</h2>
           <div className="flex flex-col gap-2">
+            <h2 className="">WHO AM I</h2>
             <p>
               hi! i'm sean, and i'm a software engineer by trade. i've been
               doing that for about a decade now and am currently based out of
@@ -52,15 +52,20 @@ export default function Index() {
         </Surface>
         <div className="flex-1 flex flex-col gap-4">
           <HeaderedSurface header="WHAT IS THIS THING">
-            <p>
-              i'm building this website as a bit of a portfolio, a bit of a
-              playground for other projects, and a bit of its own free-standing
-              art project. it's absolutely under heavy construction, so don't
-              expect a ton yet. for now, it's primary function will be as a
-              landing page to share with hiring personnel at companies i'm
-              interested in working with. if you're one of those people, then
-              hi! i promise i'm a good employee and teammate.
-            </p>
+            <div className="flex flex-col gap-2">
+              <p>
+                i'm building this website as a bit of a portfolio, a bit of a
+                playground for other projects, and a bit of its own
+                free-standing art project. it's absolutely under heavy
+                construction, so don't expect a ton yet.
+              </p>
+              <p>
+                for now, its primary function will be as a landing page to share
+                with hiring personnel at companies i'm interested in working
+                with. if you're one of those people, then hi! i promise i'm a
+                good employee and teammate.
+              </p>
+            </div>
           </HeaderedSurface>
           <HeaderedSurface header="SUPER IMPORTANT LINKS">
             <p>here's them links:</p>
