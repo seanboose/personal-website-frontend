@@ -12,9 +12,9 @@ import {
 import { Button } from '~/components/button';
 import { Divider } from '~/components/divider';
 import { HeaderedSurface } from '~/components/headeredSurface';
-import { H1 } from '~/components/headers';
 import { RowStart } from '~/components/rowStart';
 import { Surface } from '~/components/surface';
+import { H1 } from '~/components/typography';
 import { api } from '~/shared/api';
 import { requestWithAuth } from '~/shared/auth';
 
@@ -46,11 +46,11 @@ export default function ImageDisplay() {
 
   return (
     <div className="flex flex-col gap-4">
-      <H1>image retriever</H1>
-      <div className="flex flex-col md:flex-row gap-4 w-fit">
+      <H1 className="w-full">image retriever</H1>
+      <div className="flex flex-col lg:flex-row gap-4 w-full">
         <RowStart />
-        <Surface>
-          <div className="flex flex-col gap-4 w-sm">
+        <Surface className=" flex-1 w-full">
+          <div className="flex flex-col gap-4">
             <p>this is just a simple test for my auth flow</p>
             <Button type="submit" onClick={handleReloadClick}>
               {fetcher.state === 'submitting'
@@ -76,8 +76,8 @@ const ImageSurface = ({
 }) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   return (
-    <HeaderedSurface header="The Image">
-      <div className="w-xs flex flex-col gap-4">
+    <HeaderedSurface header="The Image" className="w-full flex-2">
+      <div className="flex flex-col gap-4">
         <p>{`behold${isImageLoaded ? ', an image!' : '...'}`}</p>
         <Suspense fallback={<ImageContainer />}>
           <Await resolve={loaderBody}>

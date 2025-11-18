@@ -15,3 +15,12 @@ export const H1 = ({
     </h1>
   );
 };
+export const H2 = ({
+  children,
+  className = '',
+}: {
+  children: ReactNode;
+  className?: string;
+}) => {
+  return <h2 className={className}>{children}</h2>;
+};
