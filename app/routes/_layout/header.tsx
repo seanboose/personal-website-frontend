@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router';
 
 import { RowStart } from '~/components/rowStart';
-import { paths } from '~/routes';
+import { paths } from '~/shared/paths';
 
 import { NavBanner } from './navBanner';
 
