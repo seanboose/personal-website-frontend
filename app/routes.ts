@@ -1,20 +1,4 @@
-import {
-  index,
-  layout,
-  route,
-  type RouteConfig,
-} from '@react-router/dev/routes';
+import { type RouteConfig } from '@react-router/dev/routes';
+import { flatRoutes } from '@react-router/fs-routes';
 
-export default [
-  layout('routes/_layout/route.tsx', [
-    index('routes/_layout._index.tsx'),
-    route('image-display', 'routes/_layout.image-display/route.tsx'),
-  ]),
-  route('auth/init', 'routes/auth.init.ts'),
-] satisfies RouteConfig;
-
-export const paths = {
-  imageDisplay: '/image-display',
-  home: '/',
-  login: '/auth/init',
-};
+export default flatRoutes() satisfies RouteConfig;

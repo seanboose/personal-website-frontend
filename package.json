@@ -25,6 +25,7 @@
     "@react-router/dev": "^7.9.5",
     "@react-router/node": "^7.9.5",
     "@react-router/serve": "^7.9.5",
+    "@react-router/fs-routes": "^7.9.5",
     "@seanboose/personal-website-api-types": "1.0.12",
     "isbot": "^5.1.27",
     "jwt-decode": "^4.0.0",
