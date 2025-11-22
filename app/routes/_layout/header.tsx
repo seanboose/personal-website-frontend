@@ -13,8 +13,8 @@ export const Header = () => {
           <div className="flex flex-row justify-start gap-8">
             <RowStart className={'mb-4'} />
             <HeaderItem label={'home'} route={paths.home} />
-            <HeaderItem label={'images'} route={paths.imageDisplay} />
             <HeaderItem label={'landwhale'} route={paths.landwhale} />
+            <HeaderItem label={'images'} route={paths.imageDisplay} />
           </div>
         </div>
       </div>

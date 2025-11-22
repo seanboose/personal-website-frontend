@@ -33,7 +33,7 @@ export default function Landwhale() {
   return (
     <div className="flex flex-col gap-4">
       <H1>equip the landwhale</H1>
-      <div className="flex flex-col md:flex-row gap-4 min-h-60">
+      <div className="flex flex-col md:flex-row gap-4">
         <RowStart />
         <Surface className="flex-1">
           <div className="flex flex-col gap-2">
