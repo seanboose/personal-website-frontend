@@ -7,7 +7,7 @@ export const Button = ({
 }: {
   children: ReactNode;
   onClick: () => void;
-  type: ButtonHTMLAttributes<unknown>['type'];
+  type?: ButtonHTMLAttributes<unknown>['type'];
 }) => {
   return (
     <button type={type} onClick={onClick}>
