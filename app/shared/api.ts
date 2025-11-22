@@ -1,6 +1,6 @@
 import { type ImagesListResponse } from '@seanboose/personal-website-api-types';
 
-import { clientConfig } from '~/shared/config';
+import { clientConfig } from '~/shared/clientConfig';
 
 const apiFetch = async <T>(
   path: string,

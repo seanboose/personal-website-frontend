@@ -5,7 +5,8 @@ import {
 import { jwtDecode } from 'jwt-decode';
 import { redirect } from 'react-router';
 
-import { clientConfig, serverConfig } from './config';
+import { clientConfig } from './clientConfig';
+import { serverConfig } from './serverConfig.server';
 
 const authRequestClient = 'personal-website-frontend';
 const grantAuthUrl = `${clientConfig.apiUrl}/api/auth/grant`;

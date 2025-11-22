@@ -1,29 +1,15 @@
-import { getIsServer } from './renderEnvironment';
+import { type ClientConfig, clientConfig } from '~/shared/clientConfig';
 
-export interface ClientConfig {
-  apiUrl: string;
-}
+import { getIsServer } from './renderEnvironment';
 
 export interface ServerConfig extends ClientConfig {
   authRequestKey: string;
 }
 
-export const clientConfig: ClientConfig = {
-  apiUrl: getRequiredClientEnv('VITE_API_URL'),
-};
-
 export const serverConfig: ServerConfig = {
   ...clientConfig,
   authRequestKey: getRequiredServerEnv('AUTH_REQUEST_KEY'),
 };
-
-function getRequiredClientEnv(key: string): string {
-  const value = import.meta.env[key];
-  if (!value) {
-    throw new Error(`Missing required client env var: ${key}`);
-  }
-  return value;
-}
 
 function getRequiredServerEnv(key: string): string {
   if (!getIsServer()) {
