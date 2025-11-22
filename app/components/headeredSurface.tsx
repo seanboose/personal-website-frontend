@@ -16,7 +16,7 @@ export const HeaderedSurface = ({
       <div className="bg-background-selected text-text-selected py-1 px-4">
         <H2>{header}</H2>
       </div>
-      <div className="px-4 py-2">{children}</div>
+      <div className="px-4 py-2 w-full h-full">{children}</div>
     </div>
   );
 };

@@ -13,6 +13,7 @@ export const Header = () => {
           <div className="flex flex-row justify-start gap-8">
             <RowStart className={'mb-4'} />
             <HeaderItem label={'home'} route={paths.home} />
+            <HeaderItem label={'landwhale'} route={paths.landwhale} />
             <HeaderItem label={'images'} route={paths.imageDisplay} />
           </div>
         </div>
@@ -31,7 +32,7 @@ const HeaderItem = ({ label, route }: { label: string; route: string }) => {
       className={({ isActive }) => {
         const background = isActive ? 'bg-nav-selected' : 'bg-nav-unselected';
         const spacing = isActive ? 'pb-6' : 'pb-2 mb-4';
-        return `p-2 w-30 flex flex-row items-center hover:bg-background-selected ${spacing} ${background}`;
+        return `p-2 min-w-30 flex flex-row items-center hover:bg-background-selected ${spacing} ${background}`;
       }}
     >
       {({ isActive }) => {
@@ -43,7 +44,7 @@ const HeaderItem = ({ label, route }: { label: string; route: string }) => {
           : 'bg-text-body-shaded';
         return (
           <>
-            <div className={`w-4 h-4 mr-1 ${icon}`} />
+            <div className={`w-4 h-4 min-w-4 min-h-4 mr-1 ${icon}`} />
             <p className={text}>{label.toUpperCase()}</p>
           </>
         );

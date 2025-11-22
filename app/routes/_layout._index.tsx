@@ -17,7 +17,7 @@ export default function Index() {
         <RowStart />
         <Surface className="flex-2">
           <div className="flex flex-col gap-2">
-            <h2 className="">WHO AM I</h2>
+            <h2 className="">Who am I?</h2>
             <p>
               hi! i'm sean, and i'm a software engineer by trade. i've been
               doing that for about a decade now and am currently based out of
@@ -51,7 +51,7 @@ export default function Index() {
           </div>
         </Surface>
         <div className="flex-1 flex flex-col gap-4">
-          <HeaderedSurface header="WHAT IS THIS THING">
+          <HeaderedSurface header="What is this thing?">
             <div className="flex flex-col gap-2">
               <p>
                 i'm building this website as a bit of a portfolio, a bit of a
@@ -67,7 +67,7 @@ export default function Index() {
               </p>
             </div>
           </HeaderedSurface>
-          <HeaderedSurface header="SUPER IMPORTANT LINKS">
+          <HeaderedSurface header="Super important link">
             <p>here's them links:</p>
             <ul>
               <li className="flex flex-row items-center gap-2">
