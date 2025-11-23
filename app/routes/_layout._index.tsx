@@ -67,7 +67,7 @@ export default function Index() {
               </p>
             </div>
           </HeaderedSurface>
-          <HeaderedSurface header="Super important link">
+          <HeaderedSurface header="Super important links">
             <p>here's them links:</p>
             <ul>
               <li className="flex flex-row items-center gap-2">
