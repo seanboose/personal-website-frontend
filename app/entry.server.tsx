@@ -1,12 +1,15 @@
 export default function handleRequest(
   request: Request,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   responseStatusCode: number,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   responseHeaders: Headers,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   routerContext: unknown,
 ) {
   const url = new URL(request.url);
 
-  // Block scanner traffic immediately - no SSR
+  // block scanner traffic immediately (no SSR)
   if (
     url.pathname.includes('.php') ||
     url.pathname.includes('wp-') ||
@@ -15,6 +18,5 @@ export default function handleRequest(
     return new Response('Not Found', { status: 404 });
   }
 
-  // Use default SSR for everything else
-  return null; // Falls back to React Router's default handling
+  return null; // f back to react router's default handling
 }
