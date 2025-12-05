@@ -7,8 +7,8 @@ import { redirect } from 'react-router';
 
 import { paths } from '~/shared/paths';
 
-import { clientConfig } from './clientConfig';
-import { serverConfig } from './serverConfig.server';
+import { clientConfig } from './config/client';
+import { serverConfig } from './config/server.server';
 
 const authRequestClient = 'personal-website-frontend';
 const grantAuthUrl = `${clientConfig.apiUrl}/api/auth/grant`;
