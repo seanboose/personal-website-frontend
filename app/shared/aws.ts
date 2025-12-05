@@ -1,4 +1,4 @@
-import { clientConfig } from '~/shared/clientConfig';
+import { clientConfig } from '~/shared/config/client';
 
 export function getS3Url(path: string) {
   const cleaned = path.startsWith('/') ? path.substring(1) : path;
