@@ -27,7 +27,7 @@ jobs:
       - name: install deps
         run: pnpm install --frozen-lockfile
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_PAT }}
+          GH_PACKAGES_PAT: ${{ secrets.GH_PACKAGES_PAT }}
 
       - name: run tests
         run: pnpm test
