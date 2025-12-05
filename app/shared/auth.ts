@@ -18,11 +18,6 @@ const refreshAuthUrl = `${clientConfig.apiUrl}/api/auth/refresh`;
 // this helps ensure we never send an expired token to the api
 const tokenExpirationBufferS = 30;
 
-let refreshPromise: Promise<{
-  accessToken: string;
-  headers: HeadersInit;
-}> | null = null;
-
 /**
  * make a request to an api endpoint that requires authentication.
  *  if there's a valid accessToken: makes the request normally
@@ -55,10 +50,7 @@ export async function requestWithAuth<T>(
     return { body, accessToken };
   }
 
-  if (!refreshPromise) {
-    refreshPromise = refreshAuth(request);
-  }
-  const { accessToken: newAccessToken, headers } = await refreshPromise;
+  const { accessToken: newAccessToken, headers } = await refreshAuth(request);
 
   const body = apiCall(newAccessToken);
   return {
@@ -91,25 +83,19 @@ export const requestAuth = async () => {
 };
 
 const refreshAuth = async (request: Request) => {
-  try {
-    const json = await fetchRefreshAuth(request);
-    const { accessToken, expiresIn, refreshToken, refreshExpiresIn } = json;
-    const { accessTokenCookie, refreshTokenCookie } = makeAuthCookies({
-      accessToken,
-      expiresIn,
-      refreshToken,
-      refreshExpiresIn,
-    });
-    const headers: HeadersInit = [
-      ['Set-Cookie', accessTokenCookie],
-      ['Set-Cookie', refreshTokenCookie],
-    ];
-    return { accessToken, headers };
-  } finally {
-    setTimeout(() => {
-      refreshPromise = null;
-    }, 100);
-  }
+  const json = await fetchRefreshAuth(request);
+  const { accessToken, expiresIn, refreshToken, refreshExpiresIn } = json;
+  const { accessTokenCookie, refreshTokenCookie } = makeAuthCookies({
+    accessToken,
+    expiresIn,
+    refreshToken,
+    refreshExpiresIn,
+  });
+  const headers: HeadersInit = [
+    ['Set-Cookie', accessTokenCookie],
+    ['Set-Cookie', refreshTokenCookie],
+  ];
+  return { accessToken, headers };
 };
 
 const fetchGrantAuth = async () => {
