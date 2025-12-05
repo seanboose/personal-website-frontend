@@ -3,7 +3,7 @@ services:
     build:
       context: .
       args:
-        GITHUB_PACKAGES_PAT: ${GITHUB_PACKAGES_PAT}
+        GH_PACKAGES_PAT: ${GH_PACKAGES_PAT}
         VITE_API_URL: ${VITE_API_URL}
     ports:
       - "3000:3000"
