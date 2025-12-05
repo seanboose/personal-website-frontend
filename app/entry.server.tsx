@@ -12,11 +12,15 @@ export default function handleRequest(
   // block scanner traffic immediately (no SSR)
   if (
     url.pathname.includes('.php') ||
+    url.pathname.includes('.asp') ||
     url.pathname.includes('wp-') ||
-    url.pathname.includes('.env')
+    url.pathname.includes('.env') ||
+    url.pathname.includes('/admin') ||
+    url.pathname.includes('.git') ||
+    url.pathname.includes('config.')
   ) {
     return new Response('Not Found', { status: 404 });
   }
 
-  return null; // f back to react router's default handling
+  return null; // fall back to react router's default handling
 }

@@ -25,7 +25,7 @@ export default function Login() {
             <H2>Login</H2>
             <p>sorry, but you must be logged in to view this page!</p>
             <Form method="post">
-              <Button className="w-full">login</Button>
+              <Button className="w-full">log in</Button>
             </Form>
           </div>
         </Surface>
