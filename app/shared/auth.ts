@@ -5,6 +5,8 @@ import {
 import { jwtDecode } from 'jwt-decode';
 import { redirect } from 'react-router';
 
+import { paths } from '~/shared/paths';
+
 import { clientConfig } from './clientConfig';
 import { serverConfig } from './serverConfig.server';
 
@@ -69,7 +71,7 @@ export async function requestWithAuth<T>(
 const redirectToLogin = (request: Request) => {
   const url = new URL(request.url);
   const redirectTo = url.pathname + url.search;
-  throw redirect(`/auth/init?redirectTo=${encodeURIComponent(redirectTo)}`);
+  throw redirect(`${paths.login}?redirectTo=${encodeURIComponent(redirectTo)}`);
 };
 
 export const requestAuth = async () => {

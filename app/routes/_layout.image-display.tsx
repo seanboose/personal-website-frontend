@@ -49,7 +49,7 @@ export default function ImageDisplay() {
       <H1 className="w-full">image retriever</H1>
       <div className="flex flex-col lg:flex-row gap-4 w-full">
         <RowStart />
-        <Surface className=" flex-1 w-full">
+        <Surface className="flex-1 w-full">
           <div className="flex flex-col gap-4">
             <p>this is just a simple test for my auth flow</p>
             <Button type="submit" onClick={handleReloadClick}>
