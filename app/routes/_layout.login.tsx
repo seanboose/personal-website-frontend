@@ -9,3 +9,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const redirectTo = url.searchParams.get('redirectTo') || '/';
   return redirect(redirectTo, { headers });
 };
+
+export default function Login()) {
+ return <div>
+}
