@@ -1,6 +1,6 @@
 export const paths = {
   imageDisplay: '/image-display',
   home: '/',
-  login: '/auth/init',
+  login: '/login',
   landwhale: '/landwhale',
 };

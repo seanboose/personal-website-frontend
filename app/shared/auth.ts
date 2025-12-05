@@ -5,6 +5,8 @@ import {
 import { jwtDecode } from 'jwt-decode';
 import { redirect } from 'react-router';
 
+import { paths } from '~/shared/paths';
+
 import { clientConfig } from './clientConfig';
 import { serverConfig } from './serverConfig.server';
 
@@ -15,11 +17,6 @@ const refreshAuthUrl = `${clientConfig.apiUrl}/api/auth/refresh`;
 // we'll expire client tokens earlier than their actual expiration time
 // this helps ensure we never send an expired token to the api
 const tokenExpirationBufferS = 30;
-
-let refreshPromise: Promise<{
-  accessToken: string;
-  headers: HeadersInit;
-}> | null = null;
 
 /**
  * make a request to an api endpoint that requires authentication.
@@ -53,10 +50,7 @@ export async function requestWithAuth<T>(
     return { body, accessToken };
   }
 
-  if (!refreshPromise) {
-    refreshPromise = refreshAuth(request);
-  }
-  const { accessToken: newAccessToken, headers } = await refreshPromise;
+  const { accessToken: newAccessToken, headers } = await refreshAuth(request);
 
   const body = apiCall(newAccessToken);
   return {
@@ -69,7 +63,7 @@ export async function requestWithAuth<T>(
 const redirectToLogin = (request: Request) => {
   const url = new URL(request.url);
   const redirectTo = url.pathname + url.search;
-  throw redirect(`/auth/init?redirectTo=${encodeURIComponent(redirectTo)}`);
+  throw redirect(`${paths.login}?redirectTo=${encodeURIComponent(redirectTo)}`);
 };
 
 export const requestAuth = async () => {
@@ -89,25 +83,19 @@ export const requestAuth = async () => {
 };
 
 const refreshAuth = async (request: Request) => {
-  try {
-    const json = await fetchRefreshAuth(request);
-    const { accessToken, expiresIn, refreshToken, refreshExpiresIn } = json;
-    const { accessTokenCookie, refreshTokenCookie } = makeAuthCookies({
-      accessToken,
-      expiresIn,
-      refreshToken,
-      refreshExpiresIn,
-    });
-    const headers: HeadersInit = [
-      ['Set-Cookie', accessTokenCookie],
-      ['Set-Cookie', refreshTokenCookie],
-    ];
-    return { accessToken, headers };
-  } finally {
-    setTimeout(() => {
-      refreshPromise = null;
-    }, 100);
-  }
+  const json = await fetchRefreshAuth(request);
+  const { accessToken, expiresIn, refreshToken, refreshExpiresIn } = json;
+  const { accessTokenCookie, refreshTokenCookie } = makeAuthCookies({
+    accessToken,
+    expiresIn,
+    refreshToken,
+    refreshExpiresIn,
+  });
+  const headers: HeadersInit = [
+    ['Set-Cookie', accessTokenCookie],
+    ['Set-Cookie', refreshTokenCookie],
+  ];
+  return { accessToken, headers };
 };
 
 const fetchGrantAuth = async () => {
