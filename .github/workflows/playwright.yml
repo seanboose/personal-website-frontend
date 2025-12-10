@@ -15,6 +15,8 @@ jobs:
         node-version: lts/*
     - name: install dependencies
       run: npm install -g pnpm && pnpm install
+      env:
+        GH_PACKAGES_PAT: ${{ secrets.GH_PACKAGES_PAT }}
     - name: install playwright browsers
       run: pnpm exec playwright install --with-deps
     - name: run playwright tests
