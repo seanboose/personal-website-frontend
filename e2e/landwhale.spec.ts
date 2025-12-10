@@ -22,8 +22,6 @@ test.describe('landwhale', () => {
   ];
   equipment.forEach((item) => {
     test(`can toggle item '${item}'`, async ({ page }) => {
-      // await page.goto('/landwhale');
-
       await page.getByRole('button', { name: item.replace('-', ' ') }).click();
       await expect(page.getByRole('img', { name: item })).toBeVisible();
     });
