@@ -13,6 +13,8 @@ import { serverConfig } from './config/server.server';
 const authRequestClient = 'personal-website-frontend';
 const grantAuthUrl = `${clientConfig.apiUrl}/api/auth/grant`;
 const refreshAuthUrl = `${clientConfig.apiUrl}/api/auth/refresh`;
+const accessTokenRegex = new RegExp('accessToken=([^;]+)');
+const refreshTokenRegex = new RegExp('refreshToken=([^;]+)');
 
 // we'll expire client tokens earlier than their actual expiration time
 // this helps ensure we never send an expired token to the api
@@ -156,13 +158,11 @@ const isAccessTokenValid = (accessToken: string) => {
 
 const getAccessTokenFromRequest = (request: Request): string | undefined => {
   const cookieHeader = request.headers.get('cookie');
-  const accessTokenRegex = new RegExp('accessToken=([^;]+)');
   return cookieHeader?.match(accessTokenRegex)?.[1];
 };
 
 const getRefreshTokenFromRequest = (request: Request): string | undefined => {
   const cookieHeader = request.headers.get('cookie');
-  const refreshTokenRegex = new RegExp('refreshToken=([^;]+)');
   return cookieHeader?.match(refreshTokenRegex)?.[1];
 };
 
