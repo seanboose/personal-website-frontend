@@ -1,6 +1,5 @@
-export function NavBanner() {
-  const color = '#544d43'; // hard-coded '--color-border'
-  const svgDataUri = `data:image/svg+xml,${encodeURIComponent(`
+const color = '#544d43'; // hard-coded '--color-border'
+const svgDataUri = `data:image/svg+xml,${encodeURIComponent(`
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58.56 20.22">
         <rect fill="${color}" width="8.22" height="4.44"/>
         <g>
@@ -11,6 +10,7 @@ export function NavBanner() {
       </svg>
     `)}`;
 
+export function NavBanner() {
   return (
     <div
       className="h-4 bg-repeat-x"
