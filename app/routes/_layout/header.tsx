@@ -32,7 +32,7 @@ const HeaderItem = ({ label, route }: { label: string; route: string }) => {
       className={({ isActive }) => {
         const background = isActive ? 'bg-nav-selected' : 'bg-nav-unselected';
         const spacing = isActive ? 'pb-6' : 'pb-2 mb-4';
-        return `p-2 min-w-30 flex flex-row items-center hover:bg-background-selected ${spacing} ${background}`;
+        return `p-2 flex basis-32 flex-row min-w-fit items-center hover:bg-background-selected ${spacing} ${background}`;
       }}
     >
       {({ isActive }) => {
