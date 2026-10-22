@@ -20,8 +20,7 @@
     "typecheck": "react-router typegen && tsc",
     "typecheck:watch": "react-router typegen && tsc --noEmit --watch",
     "preview": "vite preview --config vite.preview.config.ts --host 127.0.0.1 --port 3000 --strictPort",
-    "check:assets": "node scripts/check-assets.mjs",
-    "import:images": "node scripts/import-images.mjs"
+    "check:assets": "node scripts/check-assets.mjs"
   },
   "dependencies": {
     "@react-router/dev": "^7.9.5",

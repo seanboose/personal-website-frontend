@@ -21,7 +21,8 @@ Preview uses a separate Vite configuration with no React Router server plugin or
 SPA catch-all. Node is a local development/build tool, not a production service.
 Cloudflare's clean-URL normalization and custom 404 response require hosted checks.
 
-Routes: `/`, `/landwhale`, `/image-display`. `/login` is retired and returns 404.
+Routes: `/` and `/landwhale`. `/login`, `/image-display` and the old API endpoints
+are retired and return 404.
 Keep new public routes in `react-router.config.ts`'s prerender list. Do not add
 server actions or request-dependent loaders to a static deployment.
 
@@ -29,21 +30,10 @@ server actions or request-dependent loaders to a static deployment.
 
 Landwhale images live in `public/assets/landwhale/`: `base.png`, `backpack.png`,
 `gold-flipper.png`, `scanner.png`, `spikes.png`, and `spine-eyes.png`.
-The image page discovers PNG files recursively in `public/assets/images/` at build time,
-shows the first in filename order, and cycles through them with its button.
-Only place public content here. Do not copy credentials or signed URLs.
-
-If importing from the old S3 bucket, use an authorized AWS CLI profile locally:
-
-```sh
-pnpm run import:images -- YOUR_BUCKET
-pnpm run check:assets
-```
-
-Replace `YOUR_BUCKET` with the actual production bucket. Inspect downloaded files;
-nested object keys are preserved. The import command only reads S3. Commit the public images so
-builds never require AWS credentials or access to the old bucket. Keep individual
-assets below Cloudflare Pages' 25 MiB limit.
+These six PNGs are committed with the frontend and served directly. No S3 access,
+AWS CLI, image API, image manifest or authentication is required. The image/auth
+test page and its test image have been removed. Run `pnpm run check:assets` to
+validate the landwhale PNGs and the Pages asset size limit.
 
 ## Cloudflare Pages
 
@@ -80,15 +70,18 @@ PLAYWRIGHT_BASE_URL=https://YOUR_PREVIEW.pages.dev pnpm run e2e
 For the first deployment, select `csr-migration` temporarily as the Pages project's
 production branch. This publishes only to the new `pages.dev` hostname; leave the
 custom domain and DNS untouched. The existing `production` branch still contains
-the SSR build until the migration is merged. After validation and merge, change
-the Pages production branch to `production`. Use a branch preview for the final
+the SSR build until the migration is merged. The owner reviews and merges `csr-migration` into `master`, then `master` into
+`staging`. Pages deploys staging as a preview because all non-production branches
+are enabled. Test staging before promoting to `production`, then change the Pages
+production branch to `production`. Railway auto-deploys are disabled; the owner
+performs all merges. Use a branch preview for the final
 preview-specific `noindex` check; the temporary production `pages.dev` URL does
 not have the same preview indexing guarantees.
 
 ## Cutover (requires owner approval)
 
-1. Complete the image import and validation before deploying.
-2. Connect Pages and deploy `csr-migration` as a preview. Test all three routes,
+1. Validate the committed landwhale assets before deploying.
+2. Connect Pages and deploy `csr-migration` as a preview. Test both routes,
    refresh/direct navigation, equipment toggles, images, styles/fonts, metadata,
    missing assets and unknown routes. Confirm preview responses are not indexed.
 3. Complete the credential inventory and rotations in [SECURITY-CUTOVER.md](SECURITY-CUTOVER.md).

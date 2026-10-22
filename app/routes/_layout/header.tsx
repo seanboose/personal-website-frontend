@@ -14,7 +14,6 @@ export const Header = () => {
             <RowStart className={'mb-4'} />
             <HeaderItem label={'home'} route={paths.home} />
             <HeaderItem label={'landwhale'} route={paths.landwhale} />
-            <HeaderItem label={'images'} route={paths.imageDisplay} />
           </div>
         </div>
       </div>

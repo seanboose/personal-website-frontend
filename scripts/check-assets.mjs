@@ -1,4 +1,4 @@
-import { readFile, readdir, stat } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 
 const landwhale = [
   'base',
@@ -12,11 +12,7 @@ const required = landwhale.map((name) => `public/assets/landwhale/${name}.png`);
 const pngSignature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 
 try {
-  const images = (await readdir('public/assets/images', { recursive: true }))
-    .filter((name) => name.endsWith('.png'))
-    .map((name) => `public/assets/images/${name}`);
-  if (images.length === 0) throw new Error('No image-display PNGs found');
-  for (const path of [...required, ...images]) {
+  for (const path of required) {
     if ((await stat(path)).size > 25 * 1024 * 1024) {
       throw new Error(`Asset exceeds Cloudflare Pages 25 MiB limit: ${path}`);
     }
@@ -24,7 +20,7 @@ try {
       throw new Error(`Not a PNG file: ${path}`);
     }
   }
-  console.log(`Validated ${required.length + images.length} public images.`);
+  console.log(`Validated ${required.length} public images.`);
 } catch (error) {
   console.error(
     'Required public images are missing or invalid. See README.md: Images.',
