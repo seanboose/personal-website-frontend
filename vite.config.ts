@@ -7,6 +7,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import { handleChromeDevtoolsRequest } from './viteHandleChromeDevtoolsRequest';
 
 export default defineConfig({
+  clearScreen: false,
   plugins: [
     vitePluginSvgr(),
     tailwindcss(),
