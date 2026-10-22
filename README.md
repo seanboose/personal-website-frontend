@@ -25,9 +25,10 @@ Cloudflare Pages builds with `pnpm run build` and publishes `build/client`.
 Use the repository root, Node 22, pnpm 10.18.3 and no application secrets.
 `public/404.html` handles unknown paths; no SPA catch-all is needed.
 
-Review changes into `master`, promote to `staging` for a preview, then promote to
-`production`. Pages previews all non-production branches; its production branch
-is `production` (`csr-migration` temporarily during setup). The owner handles merges.
+Review changes into `master` and validate its Pages preview before promoting to
+`production`. Pages previews all non-production branches and deploys production
+from `production` to https://seanboose.com. The owner handles merges; use merge
+commits when promoting between long-lived branches.
 
 Test a hosted deployment with:
 
