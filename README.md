@@ -15,11 +15,6 @@ pnpm run e2e     # builds and tests the static output in three browsers
 pnpm run preview # existing build at http://127.0.0.1:3000
 ```
 
-Open http://localhost:5173/ for development. The dev server prints its actual
-address on the `Local:` line at startup; if port 5173 is busy, it uses the next
-available port. Watch processes preserve terminal output so that address stays
-visible in the scrollback.
-
 Landwhale PNGs live in `public/assets/landwhale/`. Add new public routes to the
 prerender list in `react-router.config.ts`. Keep initial rendering safe for the
 build environment; browser APIs belong in effects or event handlers.
