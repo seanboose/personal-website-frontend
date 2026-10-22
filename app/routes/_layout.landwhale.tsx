@@ -5,11 +5,10 @@ import { HeaderedSurface } from '~/components/headeredSurface';
 import { RowStart } from '~/components/rowStart';
 import { Surface } from '~/components/surface';
 import { H1 } from '~/components/typography';
-import { getS3Url } from '~/shared/aws';
 
-export const loader = async () => {
-  return {};
-};
+export function meta() {
+  return [{ title: 'landwhale | sean boose' }];
+}
 
 const upgrades = [
   'backpack',
@@ -50,6 +49,7 @@ export default function Landwhale() {
             <div className="flex flex-col">
               {upgrades.map((upgrade) => (
                 <Toggle
+                  key={upgrade}
                   active={visibility[upgrade]}
                   onClick={() => toggleItem(upgrade)}
                 >
@@ -65,13 +65,14 @@ export default function Landwhale() {
               <img
                 className={imgClassname}
                 alt="base"
-                src={getS3Url('/assets/landwhale/base.png')}
+                src="/assets/landwhale/base.png"
               />
               {upgrades.map((upgrade) => (
                 <img
+                  key={upgrade}
                   className={`${imgClassname} ${visibility[upgrade] ? '' : 'invisible'}`}
                   alt={upgrade}
-                  src={getS3Url(`/assets/landwhale/${upgrade}.png`)}
+                  src={`/assets/landwhale/${upgrade}.png`}
                 />
               ))}
             </div>
