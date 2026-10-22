@@ -1,10 +1,10 @@
-name: unit tests
+name: static build checks
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [production, staging, main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [production, staging, main, master]
 
 permissions:
   contents: read
@@ -28,8 +28,6 @@ jobs:
 
       - name: install deps
         run: pnpm install --frozen-lockfile
-        env:
-          GH_PACKAGES_PAT: ${{ secrets.GH_PACKAGES_PAT }}
 
       - name: run tests
         run: pnpm test
