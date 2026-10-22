@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
 
-import { Toggle } from '~/components/button';
 import { HeaderedSurface } from '~/components/headeredSurface';
 import { RowStart } from '~/components/rowStart';
 import { Surface } from '~/components/surface';
+import { Toggle } from '~/components/Toggle';
 import { H1 } from '~/components/typography';
 
 export function meta() {
