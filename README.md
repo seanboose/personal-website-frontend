@@ -1,38 +1,36 @@
-# overview
+# Personal website
 
-frontend for a personal website
+React Router 7, React 19, Tailwind 4 and Vite. The home (`/`) and landwhale
+(`/landwhale`) pages are prerendered and hosted as static files on Cloudflare Pages.
 
-built using create-vite with react-router-v7 option (i want to get more practice with SSR apps)
+## Development
 
-uses Bearer token authorization (JWT) to communicate with backend
+Use Node 22 and pnpm 10.18.3.
 
-# build
+```sh
+pnpm install --frozen-lockfile
+pnpm run dev
+pnpm test         # asset validation, lint, types, build and static-output tests
+pnpm run e2e     # builds and tests the static output in three browsers
+pnpm run preview # existing build at http://127.0.0.1:3000
+```
 
-this repo is set up for Docker, but i've decided to go with my deploy environment's (Railway) native deploy tools.
-since Railway automatically tries to deploy with Docker if it sees a Dockerfile or docker-compose.yml, i prepended those file names with UNUSED_ to force the default build/deploy method (railpack).
-remove the `UNUSED_` from those files to build/deploy using Docker (see package.json for local docker scripts)
+Landwhale PNGs live in `public/assets/landwhale/`. Add new public routes to the
+prerender list in `react-router.config.ts`. Keep initial rendering safe for the
+build environment; browser APIs belong in effects or event handlers.
 
-# deployment
+## Deployment
 
-automatically builds/deploys on changes to the `staging` and `production` branches (to their respective deployed environments)
-urls
+Cloudflare Pages builds with `pnpm run build` and publishes `build/client`.
+Use the repository root, Node 22, pnpm 10.18.3 and no application secrets.
+`public/404.html` handles unknown paths; no SPA catch-all is needed.
 
-- production: https://personal-website-frontend-production.up.railway.app/
-- staging: https://personal-website-frontend-staging.up.railway.app/
+Review changes into `master`, promote to `staging` for a preview, then promote to
+`production`. Pages previews all non-production branches; its production branch
+is `production` (`csr-migration` temporarily during setup). The owner handles merges.
 
+Test a hosted deployment with:
 
-# related repos
-
-- backend: @seanboose/personal-website-backend
-- shared types: @seanboose/personal-website-api-types
-
-# roadmap
-
-- create/edit/delete blog posts with images
-- ads server
-  - serve random fake ads on those posts
-  - attribute impressions/clicks of those ads
-  - build dashboards for viewing ad "performance"
-- generate api schema with oapi to keep client and api synchronized
-- art gallery tab so i can get off of instagram
-- 3d models tab (3d printer stuff)
+```sh
+PLAYWRIGHT_BASE_URL=https://YOUR_PREVIEW.pages.dev pnpm run e2e
+```
